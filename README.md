@@ -1,4 +1,6 @@
 # kzLauncher | Minimal text launcher
+A minimal text-based launcher based on [Olauncher](https://github.com/tanujnotes/olauncher), allowing more apps on the home screen, independent centering of the clock and app list. No internet permissions requested, since there's no phone home for wallpaper updates.
+
 ## FAQ
 ### To fix invisible app drawer and performance/battery issues
 
