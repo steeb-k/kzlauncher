@@ -6,10 +6,10 @@ A minimal text-based launcher based on [Olauncher](https://github.com/tanujnotes
 
 You can lock-unlock the phone to quickly fix the issue. For a more permanent solution:
 1. Open Olauncher settings
-2. tap the ( i ) icon on the top-right
-3. go to Battery section
-4. tap ‘Allow background usage’ text
-5. select Unrestricted (No restrictions)
+2. Tap the ( i ) icon on the top-right
+3. Go to Battery section
+4. Tap ‘Allow background usage’ text
+5. Select Unrestricted (No restrictions)
 6. Restart the phone now
 7. (Optional) Turn on the ‘Double tap to lock’ from the launcher settings
 
