@@ -32,6 +32,7 @@ import app.olauncher.data.Constants
 import app.olauncher.data.Prefs
 import app.olauncher.databinding.FragmentHomeBinding
 import app.olauncher.helper.appUsagePermissionGranted
+import app.olauncher.helper.applyTypefaceRecursively
 import app.olauncher.helper.dpToPx
 import app.olauncher.helper.expandNotificationDrawer
 import app.olauncher.helper.getUserHandleFromString
@@ -41,6 +42,7 @@ import app.olauncher.helper.openCalendar
 import app.olauncher.helper.openCameraApp
 import app.olauncher.helper.openDialerApp
 import app.olauncher.helper.openSearch
+import app.olauncher.helper.resolveCustomTypeface
 import app.olauncher.helper.showToast
 import app.olauncher.listener.OnSwipeTouchListener
 import app.olauncher.listener.ViewSwipeTouchListener
@@ -75,6 +77,13 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         setHomeAlignment(prefs.homeAlignment)
         initSwipeTouchListener()
         initClickListeners()
+        applyCustomFont(view)
+    }
+
+    private fun applyCustomFont(view: View) {
+        resolveCustomTypeface(requireContext(), prefs.fontFamily)?.let {
+            view.applyTypefaceRecursively(it)
+        }
     }
 
     override fun onResume() {

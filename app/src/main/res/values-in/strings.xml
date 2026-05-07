@@ -55,20 +55,12 @@
     <string name="light">Terang</string>
     <string name="welcome_to_olauncher_settings">Selamat datang di pengaturan!
         \n\nIngat, jika Anda memiliki pertanyaan, halaman Tentang kami memiliki jawabannya.</string>
-    <string name="rate_us_message">Hai, Anda tidak akan melihat pesan ini lagi.
-        \n\nJika Anda menyukai Olauncher, bisakah Anda memberi kami peringkat bintang 5? Ini membantu kami meningkatkan peringkat kami dan membuat kami bahagia. Terima kasih!</string>
-    <string name="share_message">Hai, kami membutuhkan bantuan Anda! Tahun lalu kami melampaui satu juta unduhan. Tahun ini kami ingin menjangkau satu juta orang lagi tetapi kami tidak dapat melakukannya sendiri.
-        \n\nMaukah Anda berbaik hati membagikan Olauncher kepada teman-teman Anda? Terima kasih dan semoga harimu menyenangkan!</string>
     <string name="keyboard_message">Hai, keyboard adalah cara tercepat untuk menemukan dan meluncurkan aplikasi di kzLauncher. Bisakah kami meminta Anda untuk mengaktifkannya selama beberapa hari lagi dan kemudian memutuskan?           Pilihan selalu menjadi milik Anda.</string>
     <string name="digital_wellbeing_message">Jika Anda ingin menetapkan batas waktu untuk aplikasi tertentu, fitur Digital Wellbeing Android dapat membantu Anda melakukannya.
         \n\nSilakan cari Digital Wellbeing di pengaturan ponsel Anda dan aktifkan.</string>
     <string name="app_usage_message">Untuk menampilkan/menyembunyikan waktu layar di layar utama, izinkan atau tolak izin penggunaan aplikasi.
         \n\nCatatan: Tidak ada data penggunaan aplikasi yang dikumpulkan. Semua diproses di perangkat Anda.</string>
-    <string name="pro_message">Olauncher juga memiliki versi pro yang disebut Pro Launcher. Ini memiliki fitur tambahan seperti cuaca, widget, font, folder, wallpaper AMOLED, dan banyak lagi.
-        \n\nIni juga merupakan cara terbaik untuk mendukung pengembang Olauncher. Cek it out!</string>
     <string name="accessibility_service_description">Izin aksesibilitas diperlukan untuk mengaktifkan ketuk dua kali untuk mengunci dan tombol beranda untuk menampilkan aplikasi terbaru. Data apa pun yang diperoleh kzLauncher melalui layanan ini tidak akan meninggalkan perangkat Anda.</string>
-    <string name="support_olauncher_for_free">Dukung Olauncher secara gratis dengan menggunakan tautan afiliasi Amazon kami.</string>
-    <string name="support_olauncher_message">Setiap kali Anda membeli sesuatu menggunakan tautan kami, kami mendapat komisi kecil. Harap simpan tautan dan gunakan setiap kali Anda berbelanja online.\nTerima kasih!</string>
     <string name="open">Buka tautan</string>
     <string name="copy">Salin</string>
     <string name="close">Tutup</string>
@@ -126,12 +118,9 @@
     <string name="screen_time">Waktu layar</string>
     <string name="did_you_know">Tahukah kamu?</string>
     <string name="leave_a_review">Tinggalkan ulasan</string>
-    <string name="review_message">Olauncher sepenuhnya gratis dan akan selalu gratis. Tidak ada iklan. Tidak mengumpulkan data pribadi. Yang terpenting, ini membantu Anda mengurangi waktu pemakaian perangkat dan menjalani kehidupan digital yang lebih sehat.
-        \n\nKami percaya bahwa beralih ke peluncur minimal adalah keputusan yang sangat baik. Meskipun kami jelas-jelas bias, kami harap Anda menikmati pengalaman ini. Jangan ragu untuk berbagi pemikiran Anda dengan kami!</string>
     <string name="alignment_changed">Penyelarasan diubah ✅</string>
     <string name="home_screen">Layar beranda</string>
     <string name="hey">Hai</string>
-    <string name="more_features">Fitur lainnya…</string>
     <string name="new_year_wish">Untuk tahun yang lebih baik dari sebelumnya. Selamat tahun baru!</string>
     <string name="new_year_wish_1">Tidak peduli bagaimana bulan Januari berlalu. Anda masih punya sisa tahun untuk melakukan yang lebih baik dari sebelumnya.</string>
     <string name="cheers">Bersulang!</string>

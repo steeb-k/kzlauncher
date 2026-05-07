@@ -20,6 +20,7 @@ import app.olauncher.data.AppModel
 import app.olauncher.data.Constants
 import app.olauncher.data.Prefs
 import app.olauncher.databinding.FragmentAppDrawerBinding
+import app.olauncher.helper.applyTypefaceRecursively
 import app.olauncher.helper.deletePinnedShortcut
 import app.olauncher.helper.hideKeyboard
 import app.olauncher.helper.isEinkDisplay
@@ -28,6 +29,7 @@ import app.olauncher.helper.isSystemApp
 import app.olauncher.helper.openAppInfo
 import app.olauncher.helper.openSearch
 import app.olauncher.helper.openUrl
+import app.olauncher.helper.resolveCustomTypeface
 import app.olauncher.helper.showKeyboard
 import app.olauncher.helper.showToast
 import app.olauncher.helper.uninstall
@@ -71,6 +73,14 @@ class AppDrawerFragment : Fragment() {
         initAdapter()
         initObservers()
         initClickListeners()
+        applyCustomFont(view)
+    }
+
+    private fun applyCustomFont(view: View) {
+        resolveCustomTypeface(requireContext(), prefs.fontFamily)?.let {
+            view.applyTypefaceRecursively(it)
+            binding.search.findViewById<TextView>(R.id.search_src_text)?.typeface = it
+        }
     }
 
     private fun initViews() {

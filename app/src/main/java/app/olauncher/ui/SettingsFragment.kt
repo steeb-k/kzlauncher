@@ -28,12 +28,14 @@ import app.olauncher.data.Prefs
 import app.olauncher.databinding.FragmentSettingsBinding
 import app.olauncher.helper.animateAlpha
 import app.olauncher.helper.appUsagePermissionGranted
+import app.olauncher.helper.applyTypefaceRecursively
 import app.olauncher.helper.getColorFromAttr
 import app.olauncher.helper.isAccessServiceEnabled
 import app.olauncher.helper.isTablet
 import app.olauncher.helper.openAppInfo
 import app.olauncher.helper.openUrl
 import app.olauncher.helper.rateApp
+import app.olauncher.helper.resolveCustomTypeface
 import app.olauncher.helper.shareApp
 import app.olauncher.helper.showToast
 import app.olauncher.listener.DeviceAdmin
@@ -67,13 +69,13 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         checkAdminPermission()
 
         binding.homeAppsNum.text = prefs.homeAppsNum.toString()
-        populateProMessage()
         populateKeyboardText()
         populateScreenTimeOnOff()
         populateLockSettings()
         populateHomeButtonRecents()
         populateAppThemeText()
         populateTextSize()
+        populateFont()
         populateAlignment()
         populateStatusBar()
         populateDateTime()
@@ -85,12 +87,20 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
 
         if (showPentastic)
             binding.footer.text = getText(R.string.new_app_minimal_todo_lists)
+        applyCustomFont(view)
+    }
+
+    private fun applyCustomFont(view: View) {
+        resolveCustomTypeface(requireContext(), prefs.fontFamily)?.let {
+            view.applyTypefaceRecursively(it)
+        }
     }
 
     override fun onClick(view: View) {
         binding.dateTimeSelectLayout.visibility = View.GONE
         binding.appThemeSelectLayout.visibility = View.GONE
         binding.swipeDownSelectLayout.visibility = View.GONE
+        binding.fontSelectLayout.visibility = View.GONE
         if (view.id != R.id.textSizeMinus && view.id != R.id.textSizePlus) {
             if (binding.textSizesLayout.isVisible) {
                 binding.textSizesLayout.visibility = View.GONE
@@ -104,7 +114,6 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
 
         when (view.id) {
             R.id.olauncherHiddenApps -> showHiddenApps()
-            R.id.moreFeatures -> viewModel.showDialog.postValue(Constants.Dialog.PRO_MESSAGE)
             R.id.screenTimeOnOff -> viewModel.showDialog.postValue(Constants.Dialog.DIGITAL_WELLBEING)
             R.id.appInfo -> openAppInfo(requireContext(), Process.myUserHandle(), BuildConfig.APPLICATION_ID)
             R.id.setLauncher -> viewModel.resetLauncherLiveData.call()
@@ -132,6 +141,12 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
             R.id.themeDark -> updateTheme(AppCompatDelegate.MODE_NIGHT_YES)
             R.id.themeSystem -> updateTheme(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
             R.id.textSizeValue -> binding.textSizesLayout.visibility = View.VISIBLE
+            R.id.font -> binding.fontSelectLayout.visibility = View.VISIBLE
+            R.id.fontSystem -> updateFont(Constants.FontFamily.SYSTEM)
+            R.id.fontInter -> updateFont(Constants.FontFamily.INTER)
+            R.id.fontJetBrainsMono -> updateFont(Constants.FontFamily.JETBRAINS_MONO)
+            R.id.fontAtkinson -> updateFont(Constants.FontFamily.ATKINSON_HYPERLEGIBLE)
+            R.id.fontOpenDyslexic -> updateFont(Constants.FontFamily.OPEN_DYSLEXIC)
             R.id.actionAccessibility -> openAccessibilityService()
             R.id.closeAccessibility -> toggleAccessibilityVisibility(false)
             R.id.notWorking -> requireContext().openUrl(Constants.URL_DOUBLE_TAP)
@@ -195,7 +210,6 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         binding.appInfo.setOnClickListener(this)
         binding.setLauncher.setOnClickListener(this)
         binding.aboutOlauncher.setOnClickListener(this)
-        binding.moreFeatures.setOnClickListener(this)
         binding.autoShowKeyboard.setOnClickListener(this)
         binding.toggleLock.setOnClickListener(this)
         binding.homeButtonRecents.setOnClickListener(this)
@@ -226,6 +240,12 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         binding.themeDark.setOnClickListener(this)
         binding.themeSystem.setOnClickListener(this)
         binding.textSizeValue.setOnClickListener(this)
+        binding.font.setOnClickListener(this)
+        binding.fontSystem.setOnClickListener(this)
+        binding.fontInter.setOnClickListener(this)
+        binding.fontJetBrainsMono.setOnClickListener(this)
+        binding.fontAtkinson.setOnClickListener(this)
+        binding.fontOpenDyslexic.setOnClickListener(this)
         binding.actionAccessibility.setOnClickListener(this)
         binding.closeAccessibility.setOnClickListener(this)
         binding.notWorking.setOnClickListener(this)
@@ -474,6 +494,25 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         }
     }
 
+    private fun populateFont() {
+        binding.font.text = getString(fontFamilyLabel(prefs.fontFamily))
+    }
+
+    private fun fontFamilyLabel(fontFamily: Int): Int = when (fontFamily) {
+        Constants.FontFamily.INTER -> R.string.font_inter
+        Constants.FontFamily.JETBRAINS_MONO -> R.string.font_jetbrains_mono
+        Constants.FontFamily.ATKINSON_HYPERLEGIBLE -> R.string.font_atkinson_hyperlegible
+        Constants.FontFamily.OPEN_DYSLEXIC -> R.string.font_open_dyslexic
+        else -> R.string.font_system
+    }
+
+    private fun updateFont(fontFamily: Int) {
+        if (prefs.fontFamily == fontFamily) return
+        prefs.fontFamily = fontFamily
+        populateFont()
+        requireActivity().recreate()
+    }
+
     private fun populateTextSize() {
         val formatted = String.format("%.1f", prefs.textSizeScale)
         binding.textSizeValue.text = formatted
@@ -598,13 +637,6 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         if (viewModel.isOlauncherDefault.value != true) return
         if (prefs.rateClicked.not() && prefs.toShowHintCounter > Constants.HINT_RATE_US && prefs.toShowHintCounter < Constants.HINT_RATE_US + 100)
             binding.rate.setCompoundDrawablesWithIntrinsicBounds(0, android.R.drawable.arrow_down_float, 0, 0)
-    }
-
-    private fun populateProMessage() {
-        if (prefs.proMessageShown.not() && prefs.userState == Constants.UserState.SHARE) {
-            prefs.proMessageShown = true
-            viewModel.showDialog.postValue(Constants.Dialog.PRO_MESSAGE)
-        }
     }
 
     override fun onDestroyView() {

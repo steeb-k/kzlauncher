@@ -86,20 +86,12 @@
     <string name="dark">مظلم</string>
     <string name="light">مضيء</string>
     <string name="welcome_to_olauncher_settings">مرحبًا بك في الإعدادات!\n\nتذكر، إذا كان لديك أي سؤال، فإن صفحة "حول" لدينا تحتوي على الإجابة.</string>
-    <string name="rate_us_message">مرحبًا ، لن ترى هذه الرسالة مرة أخرى.
-        \n\nإذا كنت تحب Olauncher ، فهل يمكنك أن تعطينا تصنيف 5 نجوم؟ يساعدنا ذلك على تحسين تصنيفنا ويجعلنا سعداء. شكرًا لك!</string>
-    <string name="share_message">مرحبا، نحن بحاجة لمساعدتكم! في العام الماضي تجاوزنا مليون عملية تنزيل. نريد هذا العام أن نصل إلى مليون آخرين ولكن لا يمكننا القيام بذلك بمفردنا.
-        \n\nهل تتفضل بمشاركة Olauncher مع أصدقائك، من فضلك؟ شكرا لك، ويوم رائع!</string>
     <string name="keyboard_message">مرحبًا ، لوحة المفاتيح هي أسرع طريقة للعثور على التطبيقات وتشغيلها في kzLauncher. هل يمكننا أن نطلب منك الاحتفاظ بهذا الأمر لبضعة أيام أخرى ثم اتخاذ القرار؟ الاختيار دائما لك.</string>
     <string name="digital_wellbeing_message">إذا كنت تريد تعيين حدود زمنية لتطبيقات معينة، فيمكن أن تساعدك ميزة الرفاهية الرقمية في Android على القيام بذلك.
         \n\nيرجى البحث عن الرفاهية الرقمية في إعدادات هاتفك وتمكينها.</string>
     <string name="app_usage_message">لعرض/إخفاء وقت استخدام الشاشة على الشاشة الرئيسية، يرجى السماح أو منع إذن استخدام التطبيق.
         \n\nملاحظة: لا يتم جمع أي بيانات حول استخدام التطبيقات. يتم معالجة كل شيء على جهازك.</string>
-    <string name="pro_message">يحتوي Olauncher أيضًا على إصدار احترافي يسمى Pro Launcher. يحتوي على ميزات إضافية مثل الطقس، والأدوات، والخطوط، والمجلدات، وخلفيات AMOLED، وما إلى ذلك.
-        \n\nإنه أيضًا أفضل طريقة لدعم مطوري Olauncher. تحقق من ذلك!</string>
     <string name="accessibility_service_description">إذن الوصول مطلوب لتمكين النقر المزدوج للقفل وزر الشاشة الرئيسية لعرض التطبيقات الأخيرة. أي بيانات حصل عليها kzLauncher عبر هذه الخدمة لن تترك جهازك.</string>
-    <string name="support_olauncher_for_free">ادعم Olauncher مجانًا باستخدام رابط الشراكة التابع لشركة Amazon.</string>
-    <string name="support_olauncher_message">في كل مرة تشتري شيئًا باستخدام الرابط الخاص بنا ، نحصل على عمولة صغيرة. يرجى حفظ الرابط واستخدامه في أي وقت تتسوق فيه عبر الإنترنت. شكرًا لك!</string>
     <string name="open">افتح الرابط</string>
     <string name="copy">ينسخ</string>
     <string name="close">يغلق</string>
@@ -124,13 +116,10 @@
     <string name="learn_more">تعلم أكثر</string>
     <string name="did_you_know">هل كنت تعلم؟</string>
     <string name="leave_a_review">أخبرنا رأيك</string>
-    <string name="review_message">Olauncher هو وسيظل دائمًا مجانيًا تمامًا. ليس لديها إعلانات. لا يجمع أي بيانات. والأهم من ذلك أنه يساعدك على تقليل وقت الشاشة والعيش حياة رقمية أكثر صحة.
-        \n\nنحن نعتقد أن التحول إلى الحد الأدنى من المشغل هو قرار ممتاز. على الرغم من أننا متحيزون بشكل واضح، إلا أننا نأمل أن تستمتع بالتجربة. لا تتردد في مشاركة أفكارك معنا!</string>
     <string name="screen_time">وقت الشاشة</string>
     <string name="alignment_changed">تم تغيير المحاذاة ✅</string>
     <string name="home_screen">الشاشة الرئيسية</string>
     <string name="hey">مرحبا</string>
-    <string name="more_features">مزايا إضافية…</string>
     <string name="new_year_wish">إليك عامًا أفضل من كل ما سبقه. سنة جديدة سعيدة!</string>
     <string name="new_year_wish_1">لا يهم كيف مضى شهر يناير. لا يزال لديك بقية العام لتقدم أداءً أفضل من أي وقت مضى.</string>
     <string name="cheers">هتافات!</string>

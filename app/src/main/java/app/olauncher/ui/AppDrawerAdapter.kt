@@ -18,10 +18,13 @@ import androidx.recyclerview.widget.RecyclerView
 import app.olauncher.R
 import app.olauncher.data.AppModel
 import app.olauncher.data.Constants
+import app.olauncher.data.Prefs
 import app.olauncher.databinding.AdapterAppDrawerBinding
 import app.olauncher.databinding.AdapterPrivateSpaceHeaderBinding
+import app.olauncher.helper.applyTypefaceRecursively
 import app.olauncher.helper.hideKeyboard
 import app.olauncher.helper.isSystemApp
+import app.olauncher.helper.resolveCustomTypeface
 import app.olauncher.helper.showKeyboard
 import java.text.Normalizer
 
@@ -98,6 +101,10 @@ class AppDrawerAdapter(
         try {
             if (appFilteredList.isEmpty() || position == RecyclerView.NO_POSITION) return
             val appModel = appFilteredList[holder.bindingAdapterPosition]
+            val context = holder.itemView.context
+            resolveCustomTypeface(context, Prefs(context).fontFamily)?.let {
+                holder.itemView.applyTypefaceRecursively(it)
+            }
             when (holder) {
                 is PrivateSpaceHeaderViewHolder -> {
                     holder.bind(

@@ -1,7 +1,14 @@
 # kzLauncher | Minimal text launcher
-A minimal text-based launcher based on [Olauncher](https://github.com/tanujnotes/olauncher), allowing more apps on the home screen, independent centering of the clock and app list. No internet permissions requested, since there's no phone home for wallpaper updates.
+A minimal text-based launcher based on [Olauncher](https://github.com/tanujnotes/olauncher), allowing more apps on the home screen, independent centering of the clock and app list, and customized fonts. No internet permissions requested, since there's no phone home for wallpaper updates.
 
 ## FAQ
+### Which fonts are available?
+* System default
+* JetBrains Mono
+* Inter
+* Atkinson Hyperlegible
+* OpenDyslexic
+
 ### To fix invisible app drawer and performance/battery issues
 
 You can lock-unlock the phone to quickly fix the issue. For a more permanent solution:
