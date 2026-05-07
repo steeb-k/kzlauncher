@@ -5,15 +5,13 @@ A minimal text-based launcher based on [Olauncher](https://github.com/tanujnotes
 ### To fix invisible app drawer and performance/battery issues
 
 You can lock-unlock the phone to quickly fix the issue. For a more permanent solution:
-
-→ Open Olauncher settings
-→ tap the ( i ) icon on the top-right
-→ go to Battery section
-→ tap ‘Allow background usage’ text
-→ select Unrestricted (No restrictions)
-→ Restart the phone now
-
-→ Turn on the ‘Double tap to lock’ from the launcher settings (optional but helpful)
+1. Open Olauncher settings
+2. tap the ( i ) icon on the top-right
+3. go to Battery section
+4. tap ‘Allow background usage’ text
+5. select Unrestricted (No restrictions)
+6. Restart the phone now
+7. (Optional) Turn on the ‘Double tap to lock’ from the launcher settings
 
 **The issues you’re noticing are Android related and will happen with any launcher you download. Taking these steps will help in reducing them. Please note that Olauncher is highly optimised and these changes will not affect your battery life.**
 
