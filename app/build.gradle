@@ -1,6 +1,13 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
+def keystorePropsFile = rootProject.file('keystore.properties')
+def hasKeystoreProps = keystorePropsFile.exists()
+def keystoreProps = new Properties()
+if (hasKeystoreProps) {
+    keystorePropsFile.withInputStream { keystoreProps.load(it) }
+}
+
 android {
     compileSdk 35
 
@@ -14,7 +21,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "app.olauncher"
+        applicationId "app.kzlauncher"
         minSdkVersion 24
         targetSdkVersion 35
         versionCode 105
@@ -24,10 +31,24 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    if (hasKeystoreProps) {
+        signingConfigs {
+            release {
+                storeFile rootProject.file(keystoreProps['storeFile'])
+                storePassword keystoreProps['storePassword']
+                keyAlias keystoreProps['keyAlias']
+                keyPassword keystoreProps['keyPassword']
+            }
+        }
+    }
+
     buildTypes {
         release {
             debuggable false
             minifyEnabled true
+            if (hasKeystoreProps) {
+                signingConfig signingConfigs.release
+            }
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {

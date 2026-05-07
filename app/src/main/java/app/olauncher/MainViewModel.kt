@@ -11,17 +11,10 @@ import android.os.UserManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import androidx.work.BackoffPolicy
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import app.olauncher.data.AppModel
 import app.olauncher.data.Constants
 import app.olauncher.data.Prefs
 import app.olauncher.helper.SingleLiveEvent
-import app.olauncher.helper.WallpaperWorker
 import app.olauncher.helper.formattedTimeSpent
 import app.olauncher.helper.getAppsList
 import app.olauncher.helper.getPrivateSpaceApps
@@ -34,7 +27,6 @@ import app.olauncher.helper.showToast
 import app.olauncher.helper.usageStats.EventLogWrapper
 import kotlinx.coroutines.launch
 import java.util.Calendar
-import java.util.concurrent.TimeUnit
 
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -50,6 +42,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val isOlauncherDefault = MutableLiveData<Boolean>()
     val launcherResetFailed = MutableLiveData<Boolean>()
     val homeAppAlignment = MutableLiveData<Int>()
+    val clockAlignment = MutableLiveData<Int>()
     val screenTimeValue = MutableLiveData<String>()
 
     val privateSpaceApps = MutableLiveData<List<AppModel>?>()
@@ -91,6 +84,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             Constants.FLAG_SET_HOME_APP_6 -> saveHomeApp(appModel, 6)
             Constants.FLAG_SET_HOME_APP_7 -> saveHomeApp(appModel, 7)
             Constants.FLAG_SET_HOME_APP_8 -> saveHomeApp(appModel, 8)
+            Constants.FLAG_SET_HOME_APP_9 -> saveHomeApp(appModel, 9)
+            Constants.FLAG_SET_HOME_APP_10 -> saveHomeApp(appModel, 10)
+            Constants.FLAG_SET_HOME_APP_11 -> saveHomeApp(appModel, 11)
+            Constants.FLAG_SET_HOME_APP_12 -> saveHomeApp(appModel, 12)
 
             Constants.FLAG_SET_SWIPE_LEFT_APP -> saveSwipeApp(appModel, isLeft = true)
             Constants.FLAG_SET_SWIPE_RIGHT_APP -> saveSwipeApp(appModel, isLeft = false)
@@ -187,6 +184,42 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                         prefs.isShortcut8 = false
                         prefs.shortcutId8 = ""
                     }
+
+                    9 -> {
+                        prefs.appName9 = appModel.appLabel
+                        prefs.appPackage9 = appModel.appPackage
+                        prefs.appUser9 = appModel.user.toString()
+                        prefs.appActivityClassName9 = appModel.activityClassName
+                        prefs.isShortcut9 = false
+                        prefs.shortcutId9 = ""
+                    }
+
+                    10 -> {
+                        prefs.appName10 = appModel.appLabel
+                        prefs.appPackage10 = appModel.appPackage
+                        prefs.appUser10 = appModel.user.toString()
+                        prefs.appActivityClassName10 = appModel.activityClassName
+                        prefs.isShortcut10 = false
+                        prefs.shortcutId10 = ""
+                    }
+
+                    11 -> {
+                        prefs.appName11 = appModel.appLabel
+                        prefs.appPackage11 = appModel.appPackage
+                        prefs.appUser11 = appModel.user.toString()
+                        prefs.appActivityClassName11 = appModel.activityClassName
+                        prefs.isShortcut11 = false
+                        prefs.shortcutId11 = ""
+                    }
+
+                    12 -> {
+                        prefs.appName12 = appModel.appLabel
+                        prefs.appPackage12 = appModel.appPackage
+                        prefs.appUser12 = appModel.user.toString()
+                        prefs.appActivityClassName12 = appModel.activityClassName
+                        prefs.isShortcut12 = false
+                        prefs.shortcutId12 = ""
+                    }
                 }
             }
 
@@ -262,6 +295,42 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                         prefs.appActivityClassName8 = null
                         prefs.isShortcut8 = true
                         prefs.shortcutId8 = appModel.shortcutId
+                    }
+
+                    9 -> {
+                        prefs.appName9 = appModel.appLabel
+                        prefs.appPackage9 = appModel.appPackage
+                        prefs.appUser9 = appModel.user.toString()
+                        prefs.appActivityClassName9 = null
+                        prefs.isShortcut9 = true
+                        prefs.shortcutId9 = appModel.shortcutId
+                    }
+
+                    10 -> {
+                        prefs.appName10 = appModel.appLabel
+                        prefs.appPackage10 = appModel.appPackage
+                        prefs.appUser10 = appModel.user.toString()
+                        prefs.appActivityClassName10 = null
+                        prefs.isShortcut10 = true
+                        prefs.shortcutId10 = appModel.shortcutId
+                    }
+
+                    11 -> {
+                        prefs.appName11 = appModel.appLabel
+                        prefs.appPackage11 = appModel.appPackage
+                        prefs.appUser11 = appModel.user.toString()
+                        prefs.appActivityClassName11 = null
+                        prefs.isShortcut11 = true
+                        prefs.shortcutId11 = appModel.shortcutId
+                    }
+
+                    12 -> {
+                        prefs.appName12 = appModel.appLabel
+                        prefs.appPackage12 = appModel.appPackage
+                        prefs.appUser12 = appModel.user.toString()
+                        prefs.appActivityClassName12 = null
+                        prefs.isShortcut12 = true
+                        prefs.shortcutId12 = appModel.shortcutId
                     }
                 }
             }
@@ -404,32 +473,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         isOlauncherDefault.value = isOlauncherDefault(appContext)
     }
 
-    fun setWallpaperWorker() {
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-        val uploadWorkRequest = PeriodicWorkRequestBuilder<WallpaperWorker>(4, TimeUnit.HOURS)
-            .setBackoffCriteria(BackoffPolicy.LINEAR, 1, TimeUnit.HOURS)
-            .setConstraints(constraints)
-            .build()
-        WorkManager
-            .getInstance(appContext)
-            .enqueueUniquePeriodicWork(
-                Constants.WALLPAPER_WORKER_NAME,
-                ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
-                uploadWorkRequest
-            )
-    }
-
-    fun cancelWallpaperWorker() {
-        WorkManager.getInstance(appContext).cancelUniqueWork(Constants.WALLPAPER_WORKER_NAME)
-        prefs.dailyWallpaperUrl = ""
-        prefs.dailyWallpaper = false
-    }
-
     fun updateHomeAlignment(gravity: Int) {
         prefs.homeAlignment = gravity
         homeAppAlignment.value = prefs.homeAlignment
+    }
+
+    fun updateClockAlignment(gravity: Int) {
+        prefs.clockAlignment = gravity
+        clockAlignment.value = prefs.clockAlignment
     }
 
     fun getTodaysScreenTime() {

@@ -34,7 +34,6 @@ import app.olauncher.databinding.FragmentHomeBinding
 import app.olauncher.helper.appUsagePermissionGranted
 import app.olauncher.helper.dpToPx
 import app.olauncher.helper.expandNotificationDrawer
-import app.olauncher.helper.getChangedAppTheme
 import app.olauncher.helper.getUserHandleFromString
 import app.olauncher.helper.isPackageInstalled
 import app.olauncher.helper.openAlarmApp
@@ -42,7 +41,6 @@ import app.olauncher.helper.openCalendar
 import app.olauncher.helper.openCameraApp
 import app.olauncher.helper.openDialerApp
 import app.olauncher.helper.openSearch
-import app.olauncher.helper.setPlainWallpaperByTheme
 import app.olauncher.helper.showToast
 import app.olauncher.listener.OnSwipeTouchListener
 import app.olauncher.listener.ViewSwipeTouchListener
@@ -141,6 +139,10 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
             R.id.homeApp6 -> showAppList(Constants.FLAG_SET_HOME_APP_6, prefs.appName6.isNotEmpty(), true)
             R.id.homeApp7 -> showAppList(Constants.FLAG_SET_HOME_APP_7, prefs.appName7.isNotEmpty(), true)
             R.id.homeApp8 -> showAppList(Constants.FLAG_SET_HOME_APP_8, prefs.appName8.isNotEmpty(), true)
+            R.id.homeApp9 -> showAppList(Constants.FLAG_SET_HOME_APP_9, prefs.appName9.isNotEmpty(), true)
+            R.id.homeApp10 -> showAppList(Constants.FLAG_SET_HOME_APP_10, prefs.appName10.isNotEmpty(), true)
+            R.id.homeApp11 -> showAppList(Constants.FLAG_SET_HOME_APP_11, prefs.appName11.isNotEmpty(), true)
+            R.id.homeApp12 -> showAppList(Constants.FLAG_SET_HOME_APP_12, prefs.appName12.isNotEmpty(), true)
             R.id.clock -> {
                 showAppList(Constants.FLAG_SET_CLOCK_APP)
                 prefs.clockAppPackage = ""
@@ -185,10 +187,6 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         }
         viewModel.isOlauncherDefault.observe(viewLifecycleOwner, Observer {
             if (it != true) {
-                if (prefs.dailyWallpaper && prefs.appTheme == AppCompatDelegate.MODE_NIGHT_YES) {
-                    prefs.dailyWallpaper = false
-                    viewModel.cancelWallpaperWorker()
-                }
                 prefs.homeBottomAlignment = false
                 setHomeAlignment()
             }
@@ -197,6 +195,9 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         })
         viewModel.homeAppAlignment.observe(viewLifecycleOwner) {
             setHomeAlignment(it)
+        }
+        viewModel.clockAlignment.observe(viewLifecycleOwner) {
+            setClockAlignment(it)
         }
         viewModel.toggleDateTime.observe(viewLifecycleOwner) {
             populateDateTime()
@@ -220,6 +221,10 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         binding.homeApp6.setOnTouchListener(getViewSwipeTouchListener(context, binding.homeApp6))
         binding.homeApp7.setOnTouchListener(getViewSwipeTouchListener(context, binding.homeApp7))
         binding.homeApp8.setOnTouchListener(getViewSwipeTouchListener(context, binding.homeApp8))
+        binding.homeApp9.setOnTouchListener(getViewSwipeTouchListener(context, binding.homeApp9))
+        binding.homeApp10.setOnTouchListener(getViewSwipeTouchListener(context, binding.homeApp10))
+        binding.homeApp11.setOnTouchListener(getViewSwipeTouchListener(context, binding.homeApp11))
+        binding.homeApp12.setOnTouchListener(getViewSwipeTouchListener(context, binding.homeApp12))
     }
 
     private fun initClickListeners() {
@@ -238,7 +243,7 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
     private fun setHomeAlignment(horizontalGravity: Int = prefs.homeAlignment) {
         val verticalGravity = if (prefs.homeBottomAlignment) Gravity.BOTTOM else Gravity.CENTER_VERTICAL
         binding.homeAppsLayout.gravity = horizontalGravity or verticalGravity
-        binding.dateTimeLayout.gravity = horizontalGravity
+        setClockAlignment(prefs.clockAlignment)
         binding.homeApp1.gravity = horizontalGravity
         binding.homeApp2.gravity = horizontalGravity
         binding.homeApp3.gravity = horizontalGravity
@@ -247,6 +252,16 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         binding.homeApp6.gravity = horizontalGravity
         binding.homeApp7.gravity = horizontalGravity
         binding.homeApp8.gravity = horizontalGravity
+        binding.homeApp9.gravity = horizontalGravity
+        binding.homeApp10.gravity = horizontalGravity
+        binding.homeApp11.gravity = horizontalGravity
+        binding.homeApp12.gravity = horizontalGravity
+    }
+
+    private fun setClockAlignment(horizontalGravity: Int = prefs.clockAlignment) {
+        binding.dateTimeLayout.gravity = horizontalGravity
+        binding.clock.gravity = horizontalGravity
+        binding.date.gravity = horizontalGravity
     }
 
     private fun populateDateTime() {
@@ -358,6 +373,34 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
             prefs.appName8 = ""
             prefs.appPackage8 = ""
         }
+        if (homeAppsNum == 8) return
+
+        binding.homeApp9.visibility = View.VISIBLE
+        if (!setHomeAppText(binding.homeApp9, prefs.appName9, prefs.appPackage9, prefs.appUser9, prefs.isShortcut9, prefs.shortcutId9)) {
+            prefs.appName9 = ""
+            prefs.appPackage9 = ""
+        }
+        if (homeAppsNum == 9) return
+
+        binding.homeApp10.visibility = View.VISIBLE
+        if (!setHomeAppText(binding.homeApp10, prefs.appName10, prefs.appPackage10, prefs.appUser10, prefs.isShortcut10, prefs.shortcutId10)) {
+            prefs.appName10 = ""
+            prefs.appPackage10 = ""
+        }
+        if (homeAppsNum == 10) return
+
+        binding.homeApp11.visibility = View.VISIBLE
+        if (!setHomeAppText(binding.homeApp11, prefs.appName11, prefs.appPackage11, prefs.appUser11, prefs.isShortcut11, prefs.shortcutId11)) {
+            prefs.appName11 = ""
+            prefs.appPackage11 = ""
+        }
+        if (homeAppsNum == 11) return
+
+        binding.homeApp12.visibility = View.VISIBLE
+        if (!setHomeAppText(binding.homeApp12, prefs.appName12, prefs.appPackage12, prefs.appUser12, prefs.isShortcut12, prefs.shortcutId12)) {
+            prefs.appName12 = ""
+            prefs.appPackage12 = ""
+        }
     }
 
     private fun setHomeAppText(
@@ -415,6 +458,10 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         binding.homeApp6.visibility = View.GONE
         binding.homeApp7.visibility = View.GONE
         binding.homeApp8.visibility = View.GONE
+        binding.homeApp9.visibility = View.GONE
+        binding.homeApp10.visibility = View.GONE
+        binding.homeApp11.visibility = View.GONE
+        binding.homeApp12.visibility = View.GONE
     }
 
     private fun launchAppOrShortcut(
@@ -576,17 +623,6 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
                 systemUiVisibility = View.SYSTEM_UI_FLAG_IMMERSIVE or View.SYSTEM_UI_FLAG_FULLSCREEN
             }
         }
-    }
-
-    private fun changeAppTheme() {
-        if (prefs.dailyWallpaper.not()) return
-        val changedAppTheme = getChangedAppTheme(requireContext(), prefs.appTheme)
-        prefs.appTheme = changedAppTheme
-        if (prefs.dailyWallpaper) {
-            setPlainWallpaperByTheme(requireContext(), changedAppTheme)
-            viewModel.setWallpaperWorker()
-        }
-        requireActivity().recreate()
     }
 
     private fun openScreenTimeDigitalWellbeing() {

@@ -1,5 +1,8 @@
 *.iml
 *.jks
+/keystore/
+/keystore.properties
+/dist/
 .gradle
 /local.properties
 /.idea/*
