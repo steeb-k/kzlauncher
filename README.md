@@ -1,34 +1,47 @@
 ![Olauncher](https://repository-images.githubusercontent.com/278638069/db0acb80-661b-11eb-803e-926cae5dccb4)
 
 
-# Olauncher | Minimal AF Launcher
-AF stands for Ad-Free
+# kzLauncher | Minimal text launcher
 
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
-    alt="Get it on F-Droid"
-    height="80">](https://f-droid.org/packages/app.olauncher)
-[<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
-    alt="Get it on Play Store"
-    height="80">](https://play.google.com/store/apps/details?id=app.olauncher)
+## FAQ
+### To fix invisible app drawer and performance/battery issues
 
-### Install using [F-Droid](https://f-droid.org/packages/app.olauncher), [Play Store](https://play.google.com/store/apps/details?id=app.olauncher) or the [latest APK](https://github.com/tanujnotes/Olauncher/releases/).
+You can lock-unlock the phone to quickly fix the issue. For a more permanent solution:
 
-- To maintain the simplicity of the launcher, a few niche features are available but hidden.
+→ Open Olauncher settings
+→ tap the ( i ) icon on the top-right
+→ go to Battery section
+→ tap ‘Allow background usage’ text
+→ select Unrestricted (No restrictions)
+→ Restart the phone now
 
-- Please check out the **[About](https://tanujnotes.substack.com/p/olauncher-minimal-af-launcher?utm_source=github)** page in the Olauncher settings for a complete list of features and **FAQs**.
+→ Turn on the ‘Double tap to lock’ from the launcher settings (optional but helpful)
+
+**The issues you’re noticing are Android related and will happen with any launcher you download. Taking these steps will help in reducing them. Please note that Olauncher is highly optimised and these changes will not affect your battery life.**
+
+### Hidden apps
+
+To find your hidden apps - Long press anywhere on Olauncher home screen to open settings. Tap on the 'Olauncher' text on the top to see your hidden apps.
+
+### Rename apps
+
+To rename app drawer apps - long press on them to see the Rename option.
+
+To rename home screen apps - long press on any home screen app and then start typing. You'll see the RENAME option. 
+
+### Disable left/right swipe gestures
+
+Long press on left/right swipe app names in Olauncher settings to enable or disable them.
+
+## Tips:
+* Swipe down on the app drawer to easily dismiss it.
+* Start scrolling the app drawer to hide the keyboard.
+* Long press on ‘Set as default launcher’ text to hide it.
+* Long press on time or date to select which apps to open on click.
+* Press the search icon 🔍 on your keyboard to launch the first app in the list.
+* If there are no search results, tap the icon to search the web. The app drawer also supports !bang searches.
+* To temporarily disable the auto launch, press SPACE on your keyboard and then type to search.
 
 ##
 
 License: [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html)
-
-Dev: [X/twitter](https://x.com/tanujnotes) • [Bluesky](https://bsky.app/profile/tanujnotes.bsky.social)
-
-##
-
-### My other apps:
-
-- [Pro Launcher](https://play.google.com/store/apps/details?id=app.prolauncher) - Pro version of Olauncher with extra features like widgets, weather, folders, etc.
-
-- [Note to Self](https://play.google.com/store/apps/details?id=com.makenotetoself) - Free and [open source](https://github.com/jeerovan/ntsapp) notes app with chat like interface and end-to-end encryption.
-
-- [Pentastic](https://play.google.com/store/apps/details?id=app.pentastic) - Minimal todo lists. Free and [open source](https://github.com/tanujnotes/Pentastic).
