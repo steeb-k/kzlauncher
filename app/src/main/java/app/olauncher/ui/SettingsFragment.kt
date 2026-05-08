@@ -145,6 +145,7 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
             R.id.weatherShowLocation -> toggleWeatherShowLocation()
             R.id.weatherUseDeviceLocation -> toggleWeatherLocationMode()
             R.id.weatherLocation -> openWeatherLocationPicker()
+            R.id.weatherApp -> showAppListIfEnabled(Constants.FLAG_SET_WEATHER_APP)
             R.id.weatherSide -> binding.weatherSideSelectLayout.visibility = View.VISIBLE
             R.id.weatherSideTop -> updateWeatherSide(Constants.WeatherSide.TOP)
             R.id.weatherSideBottom -> updateWeatherSide(Constants.WeatherSide.BOTTOM)
@@ -249,6 +250,7 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         binding.weatherShowLocation.setOnClickListener(this)
         binding.weatherUseDeviceLocation.setOnClickListener(this)
         binding.weatherLocation.setOnClickListener(this)
+        binding.weatherApp.setOnClickListener(this)
         binding.weatherSide.setOnClickListener(this)
         binding.weatherSideTop.setOnClickListener(this)
         binding.weatherSideBottom.setOnClickListener(this)
@@ -635,6 +637,7 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
             prefs.weatherLocationName.isNotBlank() -> prefs.weatherLocationName
             else -> getString(R.string.weather_location_none)
         }
+        binding.weatherApp.text = if (prefs.weatherAppName.isNotBlank()) prefs.weatherAppName else getString(R.string.none)
         binding.weatherSide.text = getString(
             when (effectiveSide) {
                 Constants.WeatherSide.TOP -> R.string.top

@@ -108,6 +108,8 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
             R.id.recents -> {}
             R.id.clock -> openClockApp()
             R.id.date -> openCalendarApp()
+            R.id.weatherHorizontalLayout -> openWeatherApp()
+            R.id.weatherLocationLabel -> openWeatherApp()
             R.id.setDefaultLauncher -> viewModel.resetLauncherLiveData.call()
             R.id.tvScreenTime -> openScreenTimeDigitalWellbeing()
 
@@ -144,6 +146,19 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
                 prefs.calendarAppClassName,
                 prefs.calendarAppUser
             )
+    }
+
+    private fun openWeatherApp() {
+        if (prefs.weatherAppPackage.isBlank()) {
+            requireContext().showToast(getString(R.string.none))
+            return
+        }
+        launchApp(
+            "Weather",
+            prefs.weatherAppPackage,
+            prefs.weatherAppClassName,
+            prefs.weatherAppUser
+        )
     }
 
     override fun onLongClick(view: View): Boolean {
@@ -252,6 +267,8 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         binding.recents.setOnClickListener(this)
         binding.clock.setOnClickListener(this)
         binding.date.setOnClickListener(this)
+        binding.weatherHorizontalLayout.setOnClickListener(this)
+        binding.weatherLocationLabel.setOnClickListener(this)
         binding.clock.setOnLongClickListener(this)
         binding.date.setOnLongClickListener(this)
         binding.setDefaultLauncher.setOnClickListener(this)

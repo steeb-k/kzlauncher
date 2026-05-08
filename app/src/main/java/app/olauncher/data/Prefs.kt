@@ -46,6 +46,10 @@ class Prefs(context: Context) {
     private val WEATHER_LONGITUDE = "WEATHER_LONGITUDE"
     private val WEATHER_SIDE = "WEATHER_SIDE"
     private val WEATHER_UNITS = "WEATHER_UNITS"
+    private val WEATHER_APP_NAME = "WEATHER_APP_NAME"
+    private val WEATHER_APP_PACKAGE = "WEATHER_APP_PACKAGE"
+    private val WEATHER_APP_USER = "WEATHER_APP_USER"
+    private val WEATHER_APP_CLASS_NAME = "WEATHER_APP_CLASS_NAME"
     private val CACHED_WEATHER_JSON = "CACHED_WEATHER_JSON"
     private val CACHED_WEATHER_TIMESTAMP = "CACHED_WEATHER_TIMESTAMP"
 
@@ -281,6 +285,22 @@ class Prefs(context: Context) {
             return initial
         }
         set(value) = prefs.edit { putInt(WEATHER_UNITS, value).apply() }
+
+    var weatherAppName: String
+        get() = prefs.getString(WEATHER_APP_NAME, "").toString()
+        set(value) = prefs.edit { putString(WEATHER_APP_NAME, value).apply() }
+
+    var weatherAppPackage: String
+        get() = prefs.getString(WEATHER_APP_PACKAGE, "").toString()
+        set(value) = prefs.edit { putString(WEATHER_APP_PACKAGE, value).apply() }
+
+    var weatherAppUser: String
+        get() = prefs.getString(WEATHER_APP_USER, "").toString()
+        set(value) = prefs.edit { putString(WEATHER_APP_USER, value).apply() }
+
+    var weatherAppClassName: String?
+        get() = prefs.getString(WEATHER_APP_CLASS_NAME, "").toString()
+        set(value) = prefs.edit { putString(WEATHER_APP_CLASS_NAME, value).apply() }
 
     var cachedWeatherJson: String
         get() = prefs.getString(CACHED_WEATHER_JSON, "").toString()
@@ -818,6 +838,7 @@ class Prefs(context: Context) {
         if (clockAppPackage == packageName) clockAppClassName = activityClassName
         if (calendarAppPackage == packageName) calendarAppClassName = activityClassName
         if (screenTimeAppPackage == packageName) screenTimeAppClassName = activityClassName
+        if (weatherAppPackage == packageName) weatherAppClassName = activityClassName
         if (appPackageSwipeLeft == packageName) appActivityClassNameSwipeLeft = activityClassName
         if (appPackageSwipeRight == packageName) appActivityClassNameRight = activityClassName
     }
