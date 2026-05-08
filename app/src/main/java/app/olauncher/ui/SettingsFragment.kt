@@ -116,6 +116,8 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         }
         if (view.id != R.id.alignmentBottom)
             binding.alignmentSelectLayout.visibility = View.GONE
+        if (view.id != R.id.appListAlignment)
+            binding.appListAlignmentSelectLayout.visibility = View.GONE
         if (view.id != R.id.clockAlignment)
             binding.clockAlignmentSelectLayout.visibility = View.GONE
         if (view.id != R.id.weatherSide)
@@ -138,6 +140,10 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
             R.id.alignmentCenter -> viewModel.updateHomeAlignment(Gravity.CENTER)
             R.id.alignmentRight -> viewModel.updateHomeAlignment(Gravity.END)
             R.id.alignmentBottom -> updateHomeBottomAlignment()
+            R.id.appListAlignment -> binding.appListAlignmentSelectLayout.visibility = View.VISIBLE
+            R.id.appListAlignmentLeft -> updateAppListAlignment(Gravity.START)
+            R.id.appListAlignmentCenter -> updateAppListAlignment(Gravity.CENTER)
+            R.id.appListAlignmentRight -> updateAppListAlignment(Gravity.END)
             R.id.clockAlignment -> binding.clockAlignmentSelectLayout.visibility = View.VISIBLE
             R.id.clockAlignmentLeft -> viewModel.updateClockAlignment(Gravity.START)
             R.id.clockAlignmentCenter -> viewModel.updateClockAlignment(Gravity.CENTER)
@@ -244,6 +250,10 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         binding.alignmentCenter.setOnClickListener(this)
         binding.alignmentRight.setOnClickListener(this)
         binding.alignmentBottom.setOnClickListener(this)
+        binding.appListAlignment.setOnClickListener(this)
+        binding.appListAlignmentLeft.setOnClickListener(this)
+        binding.appListAlignmentCenter.setOnClickListener(this)
+        binding.appListAlignmentRight.setOnClickListener(this)
         binding.clockAlignment.setOnClickListener(this)
         binding.clockAlignmentLeft.setOnClickListener(this)
         binding.clockAlignmentCenter.setOnClickListener(this)
@@ -678,6 +688,11 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         viewModel.updateHomeAlignment(prefs.homeAlignment)
     }
 
+    private fun updateAppListAlignment(alignment: Int) {
+        prefs.appLabelAlignment = alignment
+        populateAlignment()
+    }
+
     private fun populateAlignment() {
         when (prefs.homeAlignment) {
             Gravity.START -> binding.alignment.text = getString(R.string.left)
@@ -691,6 +706,11 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
             Gravity.START -> binding.clockAlignment.text = getString(R.string.left)
             Gravity.CENTER -> binding.clockAlignment.text = getString(R.string.center)
             Gravity.END -> binding.clockAlignment.text = getString(R.string.right)
+        }
+        when (prefs.appLabelAlignment) {
+            Gravity.START -> binding.appListAlignment.text = getString(R.string.left)
+            Gravity.CENTER -> binding.appListAlignment.text = getString(R.string.center)
+            Gravity.END -> binding.appListAlignment.text = getString(R.string.right)
         }
     }
 

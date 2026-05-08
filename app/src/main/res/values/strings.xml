@@ -50,7 +50,8 @@
     <string name="left">Left</string>
     <string name="right">Right</string>
     <string name="center">Center</string>
-    <string name="home_layout_alignment">App alignment</string>
+    <string name="home_layout_alignment">Home app alignment</string>
+    <string name="app_list_alignment">Drawer app alignment</string>
     <string name="clock_alignment">Clock alignment</string>
     <string name="swipe_left_app">Swipe left app</string>
     <string name="swipe_right_app">Swipe right app</string>
