@@ -52,6 +52,7 @@ class Prefs(context: Context) {
     private val WEATHER_APP_CLASS_NAME = "WEATHER_APP_CLASS_NAME"
     private val CACHED_WEATHER_JSON = "CACHED_WEATHER_JSON"
     private val CACHED_WEATHER_TIMESTAMP = "CACHED_WEATHER_TIMESTAMP"
+    private val RAINBOW_MODE = "RAINBOW_MODE"
 
     private val APP_NAME_1 = "APP_NAME_1"
     private val APP_NAME_2 = "APP_NAME_2"
@@ -247,6 +248,10 @@ class Prefs(context: Context) {
     var weatherEnabled: Boolean
         get() = prefs.getBoolean(WEATHER_ENABLED, false)
         set(value) = prefs.edit { putBoolean(WEATHER_ENABLED, value).apply() }
+
+    var rainbowMode: Boolean
+        get() = prefs.getBoolean(RAINBOW_MODE, false)
+        set(value) = prefs.edit { putBoolean(RAINBOW_MODE, value).apply() }
 
     var weatherShowLocation: Boolean
         get() = prefs.getBoolean(WEATHER_SHOW_LOCATION, false)

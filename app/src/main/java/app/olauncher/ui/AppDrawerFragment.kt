@@ -333,6 +333,13 @@ class AppDrawerFragment : Fragment() {
                     }
                 }
             }
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy != 0) {
+                    adapter.refreshVisibleRainbow(recyclerView)
+                }
+            }
         }
     }
 

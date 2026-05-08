@@ -84,6 +84,7 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         populateAlignment()
         populateWeatherSettings()
         populateStatusBar()
+        populateRainbowMode()
         populateDateTime()
         populateSwipeApps()
         populateSwipeDownAction()
@@ -153,6 +154,7 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
             R.id.weatherUnitsCelsius -> updateWeatherUnits(Constants.WeatherUnits.CELSIUS)
             R.id.weatherUnitsFahrenheit -> updateWeatherUnits(Constants.WeatherUnits.FAHRENHEIT)
             R.id.statusBar -> toggleStatusBar()
+            R.id.rainbowMode -> toggleRainbowMode()
             R.id.dateTime -> binding.dateTimeSelectLayout.visibility = View.VISIBLE
             R.id.dateTimeOn -> toggleDateTime(Constants.DateTime.ON)
             R.id.dateTimeOff -> toggleDateTime(Constants.DateTime.OFF)
@@ -258,6 +260,7 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         binding.weatherUnitsCelsius.setOnClickListener(this)
         binding.weatherUnitsFahrenheit.setOnClickListener(this)
         binding.statusBar.setOnClickListener(this)
+        binding.rainbowMode.setOnClickListener(this)
         binding.dateTime.setOnClickListener(this)
         binding.dateTimeOn.setOnClickListener(this)
         binding.dateTimeOff.setOnClickListener(this)
@@ -348,6 +351,12 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         populateStatusBar()
     }
 
+    private fun toggleRainbowMode() {
+        prefs.rainbowMode = !prefs.rainbowMode
+        populateRainbowMode()
+        requireActivity().recreate()
+    }
+
     private fun populateStatusBar() {
         if (prefs.showStatusBar) {
             showStatusBar()
@@ -356,6 +365,10 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
             hideStatusBar()
             binding.statusBar.text = getString(R.string.off)
         }
+    }
+
+    private fun populateRainbowMode() {
+        binding.rainbowMode.text = getString(if (prefs.rainbowMode) R.string.on else R.string.off)
     }
 
     private fun toggleDateTime(selected: Int) {

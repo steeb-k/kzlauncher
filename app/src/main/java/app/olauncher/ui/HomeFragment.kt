@@ -35,7 +35,9 @@ import app.olauncher.data.WeatherSnapshot
 import app.olauncher.databinding.FragmentHomeBinding
 import app.olauncher.helper.WeatherIcons
 import app.olauncher.helper.appUsagePermissionGranted
+import app.olauncher.helper.applyRainbowShader
 import app.olauncher.helper.applyTypefaceRecursively
+import app.olauncher.helper.clearRainbowShader
 import app.olauncher.helper.dpToPx
 import app.olauncher.helper.expandNotificationDrawer
 import app.olauncher.helper.getUserHandleFromString
@@ -91,6 +93,7 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
             binding.weatherIconHorizontal.typeface = symbolsFont
             binding.weatherIconVertical.typeface = symbolsFont
         }
+        applyRainbowMode()
     }
 
     override fun onResume() {
@@ -321,6 +324,7 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
                 dateText = getString(R.string.day_battery, dateText, battery)
         }
         binding.date.text = dateText.replace(".,", ",")
+        applyRainbowMode()
     }
 
     private fun populateWeather(snapshot: WeatherSnapshot?) {
@@ -374,6 +378,7 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         } else {
             root.addView(binding.sideClusterLayout)
         }
+        applyRainbowMode()
     }
 
     private fun formatTemp(value: Double): String = "${value.toInt()}°"
@@ -497,6 +502,28 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         if (!setHomeAppText(binding.homeApp12, prefs.appName12, prefs.appPackage12, prefs.appUser12, prefs.isShortcut12, prefs.shortcutId12)) {
             prefs.appName12 = ""
             prefs.appPackage12 = ""
+        }
+        applyRainbowMode()
+    }
+
+    private fun applyRainbowMode() {
+        binding.root.post {
+            applyRainbowRecursively(binding.root, binding.root, prefs.rainbowMode)
+        }
+    }
+
+    private fun applyRainbowRecursively(view: View, root: View, enabled: Boolean) {
+        if (view is TextView) {
+            if (enabled) {
+                view.applyRainbowShader(root)
+            } else {
+                view.clearRainbowShader()
+            }
+        }
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                applyRainbowRecursively(view.getChildAt(i), root, enabled)
+            }
         }
     }
 

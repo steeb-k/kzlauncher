@@ -22,6 +22,8 @@ import app.olauncher.data.Prefs
 import app.olauncher.databinding.AdapterAppDrawerBinding
 import app.olauncher.databinding.AdapterPrivateSpaceHeaderBinding
 import app.olauncher.helper.applyTypefaceRecursively
+import app.olauncher.helper.applyRainbowShader
+import app.olauncher.helper.clearRainbowShader
 import app.olauncher.helper.hideKeyboard
 import app.olauncher.helper.isSystemApp
 import app.olauncher.helper.resolveCustomTypeface
@@ -102,13 +104,15 @@ class AppDrawerAdapter(
             if (appFilteredList.isEmpty() || position == RecyclerView.NO_POSITION) return
             val appModel = appFilteredList[holder.bindingAdapterPosition]
             val context = holder.itemView.context
-            resolveCustomTypeface(context, Prefs(context).fontFamily)?.let {
+            val prefs = Prefs(context)
+            resolveCustomTypeface(context, prefs.fontFamily)?.let {
                 holder.itemView.applyTypefaceRecursively(it)
             }
             when (holder) {
                 is PrivateSpaceHeaderViewHolder -> {
                     holder.bind(
                         appLabelGravity,
+                        prefs.rainbowMode,
                         privateSpaceToggleListener,
                         privateSpaceSettingsListener,
                     )
@@ -117,6 +121,7 @@ class AppDrawerAdapter(
                 is ViewHolder -> holder.bind(
                     flag,
                     appLabelGravity,
+                    prefs.rainbowMode,
                     myUserHandle,
                     appModel,
                     appClickListener,
@@ -126,8 +131,23 @@ class AppDrawerAdapter(
                     appRenameListener
                 )
             }
+            holder.itemView.post {
+                when (holder) {
+                    is PrivateSpaceHeaderViewHolder -> holder.refreshRainbow(prefs.rainbowMode)
+                    is ViewHolder -> holder.refreshRainbow(prefs.rainbowMode)
+                }
+            }
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        val rainbowMode = Prefs(holder.itemView.context).rainbowMode
+        when (holder) {
+            is PrivateSpaceHeaderViewHolder -> holder.refreshRainbow(rainbowMode)
+            is ViewHolder -> holder.refreshRainbow(rainbowMode)
         }
     }
 
@@ -206,19 +226,37 @@ class AppDrawerAdapter(
         if (first != null) appClickListener(first)
     }
 
+    fun refreshVisibleRainbow(recyclerView: RecyclerView) {
+        val rainbowMode = Prefs(recyclerView.context).rainbowMode
+        for (i in 0 until recyclerView.childCount) {
+            val child = recyclerView.getChildAt(i)
+            when (val holder = recyclerView.getChildViewHolder(child)) {
+                is PrivateSpaceHeaderViewHolder -> holder.refreshRainbow(rainbowMode)
+                is ViewHolder -> holder.refreshRainbow(rainbowMode)
+            }
+        }
+    }
+
     class PrivateSpaceHeaderViewHolder(private val binding: AdapterPrivateSpaceHeaderBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(
             appLabelGravity: Int,
+            rainbowMode: Boolean,
             toggleListener: () -> Unit,
             settingsListener: () -> Unit,
         ) = with(binding) {
             privateSpaceTitle.gravity = appLabelGravity
+            refreshRainbow(rainbowMode)
             privateSpaceTitle.setOnClickListener { toggleListener() }
             privateSpaceTitle.setOnLongClickListener {
                 settingsListener()
                 true
             }
+        }
+
+        fun refreshRainbow(rainbowMode: Boolean) = with(binding) {
+            if (rainbowMode) privateSpaceTitle.applyRainbowShader(root.rootView)
+            else privateSpaceTitle.clearRainbowShader()
         }
     }
 
@@ -227,6 +265,7 @@ class AppDrawerAdapter(
         fun bind(
             flag: Int,
             appLabelGravity: Int,
+            rainbowMode: Boolean,
             myUserHandle: UserHandle,
             appModel: AppModel,
             clickListener: (AppModel) -> Unit,
@@ -245,6 +284,7 @@ class AppDrawerAdapter(
                 if (appModel.isNew) append(" ✦")
             }
             appTitle.gravity = appLabelGravity
+            refreshRainbow(rainbowMode)
             otherProfileIndicator.isVisible = appModel.user != myUserHandle
 
             appTitle.setOnClickListener { clickListener(appModel) }
@@ -341,6 +381,11 @@ class AppDrawerAdapter(
                 appTitle.visibility = View.VISIBLE
             }
             appHide.setOnClickListener { appHideListener(appModel, bindingAdapterPosition) }
+        }
+
+        fun refreshRainbow(rainbowMode: Boolean) = with(binding) {
+            if (rainbowMode) appTitle.applyRainbowShader(root.rootView)
+            else appTitle.clearRainbowShader()
         }
 
         private fun getAppName(context: Context, appPackage: String, user: UserHandle): String {
