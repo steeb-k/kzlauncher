@@ -33,12 +33,16 @@ object Constants {
         const val NOTIFICATIONS = 2
     }
 
-    object FontFamily {
-        const val SYSTEM = 0
-        const val INTER = 1
-        const val JETBRAINS_MONO = 2
-        const val ATKINSON_HYPERLEGIBLE = 3
-        const val OPEN_DYSLEXIC = 4
+    object WeatherSide {
+        const val LEFT = 0
+        const val RIGHT = 1
+        const val TOP = 2
+        const val BOTTOM = 3
+    }
+
+    object WeatherUnits {
+        const val CELSIUS = 0
+        const val FAHRENHEIT = 1
     }
 
     object CharacterIndicator {
@@ -102,6 +106,8 @@ object Constants {
     const val URL_PENTASTIC = "https://play.google.com/store/apps/details?id=app.pentastic"
     const val URL_DUCK_SEARCH = "https://duck.co/?q="
     const val URL_DIGITAL_WELLBEING_LEARN_MORE = "https://tanujnotes.substack.com/p/digital-wellbeing-app-on-android?utm_source=olauncher"
+    const val URL_OPEN_METEO_GEOCODE = "https://geocoding-api.open-meteo.com/v1/search"
+    const val URL_OPEN_METEO_FORECAST = "https://api.open-meteo.com/v1/forecast"
 
     const val DIGITAL_WELLBEING_PACKAGE_NAME = "com.google.android.apps.wellbeing"
     const val DIGITAL_WELLBEING_ACTIVITY = "com.google.android.apps.wellbeing.settings.TopLevelSettingsActivity"
