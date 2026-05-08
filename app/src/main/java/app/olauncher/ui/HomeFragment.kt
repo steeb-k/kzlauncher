@@ -30,7 +30,9 @@ import app.olauncher.R
 import app.olauncher.data.AppModel
 import app.olauncher.data.Constants
 import app.olauncher.data.Prefs
+import app.olauncher.data.WeatherSnapshot
 import app.olauncher.databinding.FragmentHomeBinding
+import app.olauncher.helper.WeatherIcons
 import app.olauncher.helper.appUsagePermissionGranted
 import app.olauncher.helper.applyTypefaceRecursively
 import app.olauncher.helper.dpToPx
@@ -89,6 +91,7 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
     override fun onResume() {
         super.onResume()
         populateHomeScreen(false)
+        viewModel.refreshWeather(force = true)
         viewModel.isOlauncherDefault()
         if (prefs.showStatusBar) showStatusBar()
         else hideStatusBar()
@@ -211,6 +214,9 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         viewModel.toggleDateTime.observe(viewLifecycleOwner) {
             populateDateTime()
         }
+        viewModel.weatherSnapshot.observe(viewLifecycleOwner) {
+            populateWeather(it)
+        }
         viewModel.screenTimeValue.observe(viewLifecycleOwner) {
             it?.let { binding.tvScreenTime.text = it }
         }
@@ -268,13 +274,17 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
     }
 
     private fun setClockAlignment(horizontalGravity: Int = prefs.clockAlignment) {
-        binding.dateTimeLayout.gravity = horizontalGravity
+        binding.dateTimeWeatherLayout.gravity = horizontalGravity
+        binding.sideClusterLayout.gravity = horizontalGravity
+        binding.weatherHorizontalLayout.gravity = horizontalGravity
         binding.clock.gravity = horizontalGravity
         binding.date.gravity = horizontalGravity
     }
 
     private fun populateDateTime() {
-        binding.dateTimeLayout.isVisible = prefs.dateTimeVisibility != Constants.DateTime.OFF
+        val dateTimeVisible = prefs.dateTimeVisibility != Constants.DateTime.OFF
+        binding.dateTimeLayout.isVisible = dateTimeVisible
+        binding.dateTimeWeatherLayout.isVisible = dateTimeVisible || prefs.weatherEnabled
         binding.clock.isVisible = Constants.DateTime.isTimeVisible(prefs.dateTimeVisibility)
         binding.date.isVisible = Constants.DateTime.isDateVisible(prefs.dateTimeVisibility)
 
@@ -290,6 +300,72 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         }
         binding.date.text = dateText.replace(".,", ",")
     }
+
+    private fun populateWeather(snapshot: WeatherSnapshot?) {
+        val showWeather = prefs.weatherEnabled && snapshot != null
+        val isSide = prefs.weatherSide == Constants.WeatherSide.LEFT || prefs.weatherSide == Constants.WeatherSide.RIGHT
+        val isTop = prefs.weatherSide == Constants.WeatherSide.TOP
+        val isBottom = prefs.weatherSide == Constants.WeatherSide.BOTTOM
+
+        binding.weatherHorizontalLayout.isVisible = showWeather && (isTop || isBottom)
+        binding.weatherVerticalLayout.isVisible = showWeather && isSide
+        binding.dateTimeWeatherLayout.isVisible = (prefs.dateTimeVisibility != Constants.DateTime.OFF) || showWeather
+
+        if (!showWeather) return
+        val data = snapshot ?: return
+        val temp = formatTemp(data.currentTemp)
+        val high = formatTemp(data.highTemp)
+        val low = formatTemp(data.lowTemp)
+        val icon = WeatherIcons.iconFor(data.weatherCode)
+
+        binding.weatherTempHorizontal.text = temp
+        binding.weatherTempVertical.text = temp
+        binding.weatherIconHorizontal.text = icon
+        binding.weatherIconVertical.text = icon
+        binding.weatherHighHorizontal.text = high
+        binding.weatherHighVertical.text = high
+        binding.weatherLowHorizontal.text = low
+        binding.weatherLowVertical.text = low
+
+        val sideParent = binding.sideClusterLayout
+        val verticalWeatherParent = binding.weatherVerticalLayout.parent as ViewGroup
+        if (verticalWeatherParent != sideParent) {
+            verticalWeatherParent.removeView(binding.weatherVerticalLayout)
+            sideParent.addView(binding.weatherVerticalLayout, 0)
+        }
+        val dateParent = binding.dateTimeLayout.parent as ViewGroup
+        if (dateParent != sideParent) {
+            dateParent.removeView(binding.dateTimeLayout)
+            sideParent.addView(binding.dateTimeLayout)
+        }
+        if (isSide) {
+            sideParent.removeAllViews()
+            if (prefs.weatherSide == Constants.WeatherSide.LEFT) {
+                sideParent.addView(binding.weatherVerticalLayout)
+                sideParent.addView(binding.dateTimeLayout)
+            } else {
+                sideParent.addView(binding.dateTimeLayout)
+                sideParent.addView(binding.weatherVerticalLayout)
+            }
+        } else {
+            sideParent.removeAllViews()
+            sideParent.addView(binding.dateTimeLayout)
+        }
+
+        val root = binding.dateTimeWeatherLayout
+        root.removeAllViews()
+        if (isTop) {
+            root.addView(binding.weatherHorizontalLayout)
+            root.addView(binding.sideClusterLayout)
+        } else if (isBottom) {
+            root.addView(binding.sideClusterLayout)
+            root.addView(binding.weatherHorizontalLayout)
+        } else {
+            root.addView(binding.sideClusterLayout)
+        }
+    }
+
+    private fun formatTemp(value: Double): String = "${value.toInt()}°"
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun populateScreenTime() {
@@ -321,6 +397,7 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
     private fun populateHomeScreen(appCountUpdated: Boolean) {
         if (appCountUpdated) hideHomeApps()
         populateDateTime()
+        viewModel.refreshWeather()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
             populateScreenTime()

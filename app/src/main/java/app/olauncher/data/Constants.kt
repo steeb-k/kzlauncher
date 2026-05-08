@@ -33,6 +33,14 @@ object Constants {
         const val NOTIFICATIONS = 2
     }
 
+    object FontFamily {
+        const val SYSTEM = 0
+        const val INTER = 1
+        const val JETBRAINS_MONO = 2
+        const val ATKINSON_HYPERLEGIBLE = 3
+        const val OPEN_DYSLEXIC = 4
+    }
+
     object WeatherSide {
         const val LEFT = 0
         const val RIGHT = 1
