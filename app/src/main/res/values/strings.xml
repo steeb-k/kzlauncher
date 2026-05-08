@@ -161,4 +161,19 @@
     <string name="cheers">Cheers!</string>
     <string name="notification_bar">Notification bar</string>
     <string name="private_space">Private space</string>
+    <string name="weather_show">Show weather</string>
+    <string name="weather_location">Weather location</string>
+    <string name="weather_position">Weather position</string>
+    <string name="weather_location_none">Not set</string>
+    <string name="weather_location_device">Current location</string>
+    <string name="weather_use_device_location">Use device location</string>
+    <string name="weather_location_search_hint">Search city</string>
+    <string name="weather_searching">Searching...</string>
+    <string name="weather_no_results">No matches</string>
+    <string name="weather_unavailable">--</string>
+    <string name="temperature_units">Temperature units</string>
+    <string name="celsius">°C</string>
+    <string name="fahrenheit">°F</string>
+    <string name="top">Top</string>
+    <string name="bottom">Bottom</string>
 </resources>
