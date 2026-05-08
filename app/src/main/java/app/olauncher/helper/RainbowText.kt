@@ -12,11 +12,12 @@ private val RAINBOW_COLORS = intArrayOf(
     0xFF34C759.toInt(),
     0xFF0A84FF.toInt(),
     0xFF5856D6.toInt(),
-    0xFF0A84FF.toInt(),
-    0xFF34C759.toInt(),
-    0xFFFFD60A.toInt(),
+    0xFFFF3B30.toInt(),
     0xFFFF9500.toInt(),
-    0xFFFF2D55.toInt()
+    0xFFFFD60A.toInt(),
+    0xFF34C759.toInt(),
+    0xFF0A84FF.toInt(),
+    0xFF5856D6.toInt()
 )
 
 private val RAINBOW_POSITIONS = floatArrayOf(
@@ -30,6 +31,7 @@ private val RAINBOW_POSITIONS = floatArrayOf(
     0.7f,
     0.8f,
     0.9f,
+    0.95f,
     1f
 )
 

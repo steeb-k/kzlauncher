@@ -63,6 +63,7 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+    private var applyRainbowRunnable: Runnable? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -507,9 +508,13 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
     }
 
     private fun applyRainbowMode() {
-        binding.root.post {
-            applyRainbowRecursively(binding.root, binding.root, prefs.rainbowMode)
+        val root = _binding?.root ?: return
+        applyRainbowRunnable?.let { root.removeCallbacks(it) }
+        applyRainbowRunnable = Runnable {
+            val safeBinding = _binding ?: return@Runnable
+            applyRainbowRecursively(safeBinding.root, safeBinding.root, prefs.rainbowMode)
         }
+        root.post(applyRainbowRunnable)
     }
 
     private fun applyRainbowRecursively(view: View, root: View, enabled: Boolean) {
@@ -869,6 +874,10 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
     }
 
     override fun onDestroyView() {
+        applyRainbowRunnable?.let { runnable ->
+            _binding?.root?.removeCallbacks(runnable)
+        }
+        applyRainbowRunnable = null
         super.onDestroyView()
         _binding = null
     }
