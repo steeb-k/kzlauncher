@@ -18,6 +18,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
@@ -85,6 +86,10 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
     private fun applyCustomFont(view: View) {
         resolveCustomTypeface(requireContext(), prefs.fontFamily)?.let {
             view.applyTypefaceRecursively(it)
+        }
+        ResourcesCompat.getFont(requireContext(), R.font.material_symbols_outlined)?.let { symbolsFont ->
+            binding.weatherIconHorizontal.typeface = symbolsFont
+            binding.weatherIconVertical.typeface = symbolsFont
         }
     }
 
@@ -302,21 +307,28 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
     }
 
     private fun populateWeather(snapshot: WeatherSnapshot?) {
-        val showWeather = prefs.weatherEnabled && snapshot != null
-        val isSide = prefs.weatherSide == Constants.WeatherSide.LEFT || prefs.weatherSide == Constants.WeatherSide.RIGHT
-        val isTop = prefs.weatherSide == Constants.WeatherSide.TOP
-        val isBottom = prefs.weatherSide == Constants.WeatherSide.BOTTOM
+        val showWeather = prefs.weatherEnabled
+        val weatherSide = when (prefs.weatherSide) {
+            Constants.WeatherSide.TOP, Constants.WeatherSide.BOTTOM -> prefs.weatherSide
+            else -> Constants.WeatherSide.TOP
+        }
+        if (weatherSide != prefs.weatherSide) {
+            prefs.weatherSide = weatherSide
+        }
+        val isTop = weatherSide == Constants.WeatherSide.TOP
+        val isBottom = weatherSide == Constants.WeatherSide.BOTTOM
+        val showLocationLabel = showWeather && prefs.weatherShowLocation
 
         binding.weatherHorizontalLayout.isVisible = showWeather && (isTop || isBottom)
-        binding.weatherVerticalLayout.isVisible = showWeather && isSide
+        binding.weatherVerticalLayout.isVisible = false
+        binding.weatherLocationLabel.isVisible = showLocationLabel
         binding.dateTimeWeatherLayout.isVisible = (prefs.dateTimeVisibility != Constants.DateTime.OFF) || showWeather
 
         if (!showWeather) return
-        val data = snapshot ?: return
-        val temp = formatTemp(data.currentTemp)
-        val high = formatTemp(data.highTemp)
-        val low = formatTemp(data.lowTemp)
-        val icon = WeatherIcons.iconFor(data.weatherCode)
+        val temp = snapshot?.let { formatTemp(it.currentTemp) } ?: getString(R.string.weather_unavailable)
+        val high = snapshot?.let { formatTemp(it.highTemp) } ?: getString(R.string.weather_unavailable)
+        val low = snapshot?.let { formatTemp(it.lowTemp) } ?: getString(R.string.weather_unavailable)
+        val icon = snapshot?.let { WeatherIcons.iconFor(it.weatherCode) } ?: WeatherIcons.iconFor(3)
 
         binding.weatherTempHorizontal.text = temp
         binding.weatherTempVertical.text = temp
@@ -326,40 +338,22 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         binding.weatherHighVertical.text = high
         binding.weatherLowHorizontal.text = low
         binding.weatherLowVertical.text = low
-
-        val sideParent = binding.sideClusterLayout
-        val verticalWeatherParent = binding.weatherVerticalLayout.parent as ViewGroup
-        if (verticalWeatherParent != sideParent) {
-            verticalWeatherParent.removeView(binding.weatherVerticalLayout)
-            sideParent.addView(binding.weatherVerticalLayout, 0)
-        }
-        val dateParent = binding.dateTimeLayout.parent as ViewGroup
-        if (dateParent != sideParent) {
-            dateParent.removeView(binding.dateTimeLayout)
-            sideParent.addView(binding.dateTimeLayout)
-        }
-        if (isSide) {
-            sideParent.removeAllViews()
-            if (prefs.weatherSide == Constants.WeatherSide.LEFT) {
-                sideParent.addView(binding.weatherVerticalLayout)
-                sideParent.addView(binding.dateTimeLayout)
-            } else {
-                sideParent.addView(binding.dateTimeLayout)
-                sideParent.addView(binding.weatherVerticalLayout)
-            }
-        } else {
-            sideParent.removeAllViews()
-            sideParent.addView(binding.dateTimeLayout)
+        binding.weatherLocationLabel.text = when {
+            prefs.weatherLocationName.isNotBlank() -> prefs.weatherLocationName
+            prefs.weatherUseDeviceLocation -> getString(R.string.weather_location_device)
+            else -> getString(R.string.weather_location_none)
         }
 
         val root = binding.dateTimeWeatherLayout
         root.removeAllViews()
         if (isTop) {
             root.addView(binding.weatherHorizontalLayout)
+            if (showLocationLabel) root.addView(binding.weatherLocationLabel)
             root.addView(binding.sideClusterLayout)
         } else if (isBottom) {
             root.addView(binding.sideClusterLayout)
             root.addView(binding.weatherHorizontalLayout)
+            if (showLocationLabel) root.addView(binding.weatherLocationLabel)
         } else {
             root.addView(binding.sideClusterLayout)
         }

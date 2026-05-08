@@ -142,13 +142,12 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
             R.id.clockAlignmentCenter -> viewModel.updateClockAlignment(Gravity.CENTER)
             R.id.clockAlignmentRight -> viewModel.updateClockAlignment(Gravity.END)
             R.id.weatherEnabled -> toggleWeatherEnabled()
+            R.id.weatherShowLocation -> toggleWeatherShowLocation()
             R.id.weatherUseDeviceLocation -> toggleWeatherLocationMode()
             R.id.weatherLocation -> openWeatherLocationPicker()
             R.id.weatherSide -> binding.weatherSideSelectLayout.visibility = View.VISIBLE
             R.id.weatherSideTop -> updateWeatherSide(Constants.WeatherSide.TOP)
             R.id.weatherSideBottom -> updateWeatherSide(Constants.WeatherSide.BOTTOM)
-            R.id.weatherSideLeft -> updateWeatherSide(Constants.WeatherSide.LEFT)
-            R.id.weatherSideRight -> updateWeatherSide(Constants.WeatherSide.RIGHT)
             R.id.weatherUnits -> binding.weatherUnitsSelectLayout.visibility = View.VISIBLE
             R.id.weatherUnitsCelsius -> updateWeatherUnits(Constants.WeatherUnits.CELSIUS)
             R.id.weatherUnitsFahrenheit -> updateWeatherUnits(Constants.WeatherUnits.FAHRENHEIT)
@@ -247,13 +246,12 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         binding.clockAlignmentCenter.setOnClickListener(this)
         binding.clockAlignmentRight.setOnClickListener(this)
         binding.weatherEnabled.setOnClickListener(this)
+        binding.weatherShowLocation.setOnClickListener(this)
         binding.weatherUseDeviceLocation.setOnClickListener(this)
         binding.weatherLocation.setOnClickListener(this)
         binding.weatherSide.setOnClickListener(this)
         binding.weatherSideTop.setOnClickListener(this)
         binding.weatherSideBottom.setOnClickListener(this)
-        binding.weatherSideLeft.setOnClickListener(this)
-        binding.weatherSideRight.setOnClickListener(this)
         binding.weatherUnits.setOnClickListener(this)
         binding.weatherUnitsCelsius.setOnClickListener(this)
         binding.weatherUnitsFahrenheit.setOnClickListener(this)
@@ -564,6 +562,12 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         viewModel.refreshHome(false)
     }
 
+    private fun toggleWeatherShowLocation() {
+        prefs.weatherShowLocation = !prefs.weatherShowLocation
+        populateWeatherSettings()
+        viewModel.refreshHome(false)
+    }
+
     private fun toggleWeatherLocationMode() {
         val enablingDeviceLocation = !prefs.weatherUseDeviceLocation
         if (enablingDeviceLocation && !hasCoarseLocationPermission()) {
@@ -594,6 +598,7 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun updateWeatherSide(side: Int) {
+        if (side != Constants.WeatherSide.TOP && side != Constants.WeatherSide.BOTTOM) return
         if (prefs.weatherSide == side) return
         prefs.weatherSide = side
         populateWeatherSettings()
@@ -615,7 +620,15 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun populateWeatherSettings() {
+        val effectiveSide = when (prefs.weatherSide) {
+            Constants.WeatherSide.TOP, Constants.WeatherSide.BOTTOM -> prefs.weatherSide
+            else -> Constants.WeatherSide.TOP
+        }
+        if (effectiveSide != prefs.weatherSide) {
+            prefs.weatherSide = effectiveSide
+        }
         binding.weatherEnabled.text = getString(if (prefs.weatherEnabled) R.string.on else R.string.off)
+        binding.weatherShowLocation.text = getString(if (prefs.weatherShowLocation) R.string.on else R.string.off)
         binding.weatherUseDeviceLocation.text = getString(if (prefs.weatherUseDeviceLocation) R.string.on else R.string.off)
         binding.weatherLocation.text = when {
             prefs.weatherUseDeviceLocation -> getString(R.string.weather_location_device)
@@ -623,11 +636,10 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
             else -> getString(R.string.weather_location_none)
         }
         binding.weatherSide.text = getString(
-            when (prefs.weatherSide) {
+            when (effectiveSide) {
                 Constants.WeatherSide.TOP -> R.string.top
                 Constants.WeatherSide.BOTTOM -> R.string.bottom
-                Constants.WeatherSide.LEFT -> R.string.left
-                else -> R.string.right
+                else -> R.string.top
             }
         )
         binding.weatherUnits.text = getString(

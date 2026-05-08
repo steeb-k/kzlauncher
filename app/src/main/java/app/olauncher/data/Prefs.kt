@@ -39,6 +39,7 @@ class Prefs(context: Context) {
     private val SHOWN_ON_DAY_OF_YEAR = "SHOWN_ON_DAY_OF_YEAR"
     private val HOME_BUTTON_SHOW_RECENTS = "HOME_BUTTON_SHOW_RECENTS"
     private val WEATHER_ENABLED = "WEATHER_ENABLED"
+    private val WEATHER_SHOW_LOCATION = "WEATHER_SHOW_LOCATION"
     private val WEATHER_USE_DEVICE_LOCATION = "WEATHER_USE_DEVICE_LOCATION"
     private val WEATHER_LOCATION_NAME = "WEATHER_LOCATION_NAME"
     private val WEATHER_LATITUDE = "WEATHER_LATITUDE"
@@ -243,6 +244,10 @@ class Prefs(context: Context) {
         get() = prefs.getBoolean(WEATHER_ENABLED, false)
         set(value) = prefs.edit { putBoolean(WEATHER_ENABLED, value).apply() }
 
+    var weatherShowLocation: Boolean
+        get() = prefs.getBoolean(WEATHER_SHOW_LOCATION, false)
+        set(value) = prefs.edit { putBoolean(WEATHER_SHOW_LOCATION, value).apply() }
+
     var weatherUseDeviceLocation: Boolean
         get() = prefs.getBoolean(WEATHER_USE_DEVICE_LOCATION, false)
         set(value) = prefs.edit { putBoolean(WEATHER_USE_DEVICE_LOCATION, value).apply() }
@@ -260,7 +265,7 @@ class Prefs(context: Context) {
         set(value) = prefs.edit { putFloat(WEATHER_LONGITUDE, value).apply() }
 
     var weatherSide: Int
-        get() = prefs.getInt(WEATHER_SIDE, Constants.WeatherSide.RIGHT)
+        get() = prefs.getInt(WEATHER_SIDE, Constants.WeatherSide.TOP)
         set(value) = prefs.edit { putInt(WEATHER_SIDE, value).apply() }
 
     var weatherUnits: Int

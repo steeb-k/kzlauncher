@@ -162,6 +162,7 @@
     <string name="notification_bar">Notification bar</string>
     <string name="private_space">Private space</string>
     <string name="weather_show">Show weather</string>
+    <string name="weather_show_location">Show weather location</string>
     <string name="weather_location">Weather location</string>
     <string name="weather_position">Weather position</string>
     <string name="weather_location_none">Not set</string>

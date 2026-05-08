@@ -456,6 +456,32 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:paddingVertical="8dp"
+                        android:text="@string/weather_show_location"
+                        android:textColor="?attr/primaryColor" />
+
+                    <TextView
+                        android:id="@+id/weatherShowLocation"
+                        style="@style/TextSmallBold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end|bottom"
+                        android:layout_marginEnd="4dp"
+                        android:padding="8dp"
+                        android:text="@string/off" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:animateLayoutChanges="true">
+
+                    <TextView
+                        style="@style/TextSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:paddingVertical="8dp"
                         android:text="@string/weather_use_device_location"
                         android:textColor="?attr/primaryColor" />
 
@@ -551,22 +577,6 @@
                             android:paddingVertical="6dp"
                             android:text="@string/bottom" />
 
-                        <TextView
-                            android:id="@+id/weatherSideLeft"
-                            style="@style/TextSmallBold"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="20dp"
-                            android:paddingVertical="6dp"
-                            android:text="@string/left" />
-
-                        <TextView
-                            android:id="@+id/weatherSideRight"
-                            style="@style/TextSmallBold"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:paddingVertical="6dp"
-                            android:text="@string/right" />
                     </LinearLayout>
                 </FrameLayout>
 
