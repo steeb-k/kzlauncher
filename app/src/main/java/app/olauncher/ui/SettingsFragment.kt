@@ -114,7 +114,7 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
                 applyTextSizeScale()
             }
         }
-        if (view.id != R.id.alignmentBottom)
+        if (view.id != R.id.alignment)
             binding.alignmentSelectLayout.visibility = View.GONE
         if (view.id != R.id.appListAlignment)
             binding.appListAlignmentSelectLayout.visibility = View.GONE
@@ -139,7 +139,7 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
             R.id.alignmentLeft -> viewModel.updateHomeAlignment(Gravity.START)
             R.id.alignmentCenter -> viewModel.updateHomeAlignment(Gravity.CENTER)
             R.id.alignmentRight -> viewModel.updateHomeAlignment(Gravity.END)
-            R.id.alignmentBottom -> updateHomeBottomAlignment()
+            R.id.homeBottomAlignment -> updateHomeBottomAlignment()
             R.id.appListAlignment -> binding.appListAlignmentSelectLayout.visibility = View.VISIBLE
             R.id.appListAlignmentLeft -> updateAppListAlignment(Gravity.START)
             R.id.appListAlignmentCenter -> updateAppListAlignment(Gravity.CENTER)
@@ -249,7 +249,7 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         binding.alignmentLeft.setOnClickListener(this)
         binding.alignmentCenter.setOnClickListener(this)
         binding.alignmentRight.setOnClickListener(this)
-        binding.alignmentBottom.setOnClickListener(this)
+        binding.homeBottomAlignment.setOnClickListener(this)
         binding.appListAlignment.setOnClickListener(this)
         binding.appListAlignmentLeft.setOnClickListener(this)
         binding.appListAlignmentCenter.setOnClickListener(this)
@@ -679,10 +679,6 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun updateHomeBottomAlignment() {
-        if (viewModel.isOlauncherDefault.value != true) {
-            requireContext().showToast(getString(R.string.please_set_olauncher_as_default_first), Toast.LENGTH_LONG)
-            return
-        }
         prefs.homeBottomAlignment = !prefs.homeBottomAlignment
         populateAlignment()
         viewModel.updateHomeAlignment(prefs.homeAlignment)
@@ -699,9 +695,9 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
             Gravity.CENTER -> binding.alignment.text = getString(R.string.center)
             Gravity.END -> binding.alignment.text = getString(R.string.right)
         }
-        binding.alignmentBottom.text = if (prefs.homeBottomAlignment)
-            getString(R.string.bottom_on)
-        else getString(R.string.bottom_off)
+        binding.homeBottomAlignment.text = getString(
+            if (prefs.homeBottomAlignment) R.string.on else R.string.off
+        )
         when (prefs.clockAlignment) {
             Gravity.START -> binding.clockAlignment.text = getString(R.string.left)
             Gravity.CENTER -> binding.clockAlignment.text = getString(R.string.center)
