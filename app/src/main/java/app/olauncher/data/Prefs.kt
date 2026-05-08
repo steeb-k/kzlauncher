@@ -38,6 +38,15 @@ class Prefs(context: Context) {
     private val LAUNCHER_RESTART_TIMESTAMP = "LAUNCHER_RECREATE_TIMESTAMP"
     private val SHOWN_ON_DAY_OF_YEAR = "SHOWN_ON_DAY_OF_YEAR"
     private val HOME_BUTTON_SHOW_RECENTS = "HOME_BUTTON_SHOW_RECENTS"
+    private val WEATHER_ENABLED = "WEATHER_ENABLED"
+    private val WEATHER_USE_DEVICE_LOCATION = "WEATHER_USE_DEVICE_LOCATION"
+    private val WEATHER_LOCATION_NAME = "WEATHER_LOCATION_NAME"
+    private val WEATHER_LATITUDE = "WEATHER_LATITUDE"
+    private val WEATHER_LONGITUDE = "WEATHER_LONGITUDE"
+    private val WEATHER_SIDE = "WEATHER_SIDE"
+    private val WEATHER_UNITS = "WEATHER_UNITS"
+    private val CACHED_WEATHER_JSON = "CACHED_WEATHER_JSON"
+    private val CACHED_WEATHER_TIMESTAMP = "CACHED_WEATHER_TIMESTAMP"
 
     private val APP_NAME_1 = "APP_NAME_1"
     private val APP_NAME_2 = "APP_NAME_2"
@@ -229,6 +238,52 @@ class Prefs(context: Context) {
     var homeButtonShowRecents: Boolean
         get() = prefs.getBoolean(HOME_BUTTON_SHOW_RECENTS, false)
         set(value) = prefs.edit { putBoolean(HOME_BUTTON_SHOW_RECENTS, value).apply() }
+
+    var weatherEnabled: Boolean
+        get() = prefs.getBoolean(WEATHER_ENABLED, false)
+        set(value) = prefs.edit { putBoolean(WEATHER_ENABLED, value).apply() }
+
+    var weatherUseDeviceLocation: Boolean
+        get() = prefs.getBoolean(WEATHER_USE_DEVICE_LOCATION, false)
+        set(value) = prefs.edit { putBoolean(WEATHER_USE_DEVICE_LOCATION, value).apply() }
+
+    var weatherLocationName: String
+        get() = prefs.getString(WEATHER_LOCATION_NAME, "").toString()
+        set(value) = prefs.edit { putString(WEATHER_LOCATION_NAME, value).apply() }
+
+    var weatherLatitude: Float
+        get() = prefs.getFloat(WEATHER_LATITUDE, 0f)
+        set(value) = prefs.edit { putFloat(WEATHER_LATITUDE, value).apply() }
+
+    var weatherLongitude: Float
+        get() = prefs.getFloat(WEATHER_LONGITUDE, 0f)
+        set(value) = prefs.edit { putFloat(WEATHER_LONGITUDE, value).apply() }
+
+    var weatherSide: Int
+        get() = prefs.getInt(WEATHER_SIDE, Constants.WeatherSide.RIGHT)
+        set(value) = prefs.edit { putInt(WEATHER_SIDE, value).apply() }
+
+    var weatherUnits: Int
+        get() {
+            if (prefs.contains(WEATHER_UNITS)) {
+                return prefs.getInt(WEATHER_UNITS, Constants.WeatherUnits.CELSIUS)
+            }
+            val country = java.util.Locale.getDefault().country.uppercase(java.util.Locale.ROOT)
+            val fahrenheit = country == "US" || country == "LR" || country == "BS" ||
+                country == "BZ" || country == "KY" || country == "PW"
+            val initial = if (fahrenheit) Constants.WeatherUnits.FAHRENHEIT else Constants.WeatherUnits.CELSIUS
+            prefs.edit { putInt(WEATHER_UNITS, initial).apply() }
+            return initial
+        }
+        set(value) = prefs.edit { putInt(WEATHER_UNITS, value).apply() }
+
+    var cachedWeatherJson: String
+        get() = prefs.getString(CACHED_WEATHER_JSON, "").toString()
+        set(value) = prefs.edit { putString(CACHED_WEATHER_JSON, value).apply() }
+
+    var cachedWeatherTimestamp: Long
+        get() = prefs.getLong(CACHED_WEATHER_TIMESTAMP, 0L)
+        set(value) = prefs.edit { putLong(CACHED_WEATHER_TIMESTAMP, value).apply() }
 
     var hiddenApps: MutableSet<String>
         get() = prefs.getStringSet(HIDDEN_APPS, mutableSetOf()) as MutableSet<String>
