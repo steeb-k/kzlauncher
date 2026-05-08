@@ -1,10 +1,13 @@
 package app.olauncher
 
+import android.Manifest
 import android.app.Application
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.LauncherApps
+import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Build
 import android.os.UserHandle
 import android.os.UserManager
@@ -14,6 +17,8 @@ import androidx.lifecycle.viewModelScope
 import app.olauncher.data.AppModel
 import app.olauncher.data.Constants
 import app.olauncher.data.Prefs
+import app.olauncher.data.WeatherSnapshot
+import app.olauncher.helper.WeatherClient
 import app.olauncher.helper.SingleLiveEvent
 import app.olauncher.helper.formattedTimeSpent
 import app.olauncher.helper.getAppsList
@@ -25,7 +30,9 @@ import app.olauncher.helper.isPackageInstalled
 import app.olauncher.helper.isPrivateSpaceLocked
 import app.olauncher.helper.showToast
 import app.olauncher.helper.usageStats.EventLogWrapper
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.util.Calendar
 
 
@@ -44,6 +51,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val homeAppAlignment = MutableLiveData<Int>()
     val clockAlignment = MutableLiveData<Int>()
     val screenTimeValue = MutableLiveData<String>()
+    val weatherSnapshot = MutableLiveData<WeatherSnapshot?>()
+    val weatherAvailable = MutableLiveData<Boolean>()
 
     val privateSpaceApps = MutableLiveData<List<AppModel>?>()
     val privateSpaceLocked = MutableLiveData<Boolean>()
@@ -410,6 +419,89 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun refreshHome(appCountUpdated: Boolean) {
         refreshHome.value = appCountUpdated
+    }
+
+    fun refreshWeather(force: Boolean = false) {
+        if (!prefs.weatherEnabled) {
+            weatherAvailable.postValue(false)
+            weatherSnapshot.postValue(null)
+            return
+        }
+        if (!force && prefs.cachedWeatherTimestamp.hasBeenMinutes(45)) {
+            parseCachedWeather()?.let {
+                weatherSnapshot.postValue(it)
+                weatherAvailable.postValue(true)
+                return
+            }
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            val coordinates = resolveWeatherCoordinates()
+            if (coordinates == null) {
+                weatherAvailable.postValue(false)
+                weatherSnapshot.postValue(parseCachedWeather())
+                return@launch
+            }
+            try {
+                val snapshot = WeatherClient.fetchWeather(
+                    latitude = coordinates.first,
+                    longitude = coordinates.second,
+                    fahrenheit = prefs.weatherUnits == Constants.WeatherUnits.FAHRENHEIT
+                )
+                prefs.cachedWeatherJson = JSONObject()
+                    .put("currentTemp", snapshot.currentTemp)
+                    .put("highTemp", snapshot.highTemp)
+                    .put("lowTemp", snapshot.lowTemp)
+                    .put("weatherCode", snapshot.weatherCode)
+                    .put("fetchedAt", snapshot.fetchedAt)
+                    .put("fahrenheit", snapshot.fahrenheit)
+                    .toString()
+                prefs.cachedWeatherTimestamp = snapshot.fetchedAt
+                weatherSnapshot.postValue(snapshot)
+                weatherAvailable.postValue(true)
+            } catch (_: Exception) {
+                weatherSnapshot.postValue(parseCachedWeather())
+                weatherAvailable.postValue(prefs.cachedWeatherJson.isNotBlank())
+            }
+        }
+    }
+
+    private fun parseCachedWeather(): WeatherSnapshot? {
+        val cached = prefs.cachedWeatherJson
+        if (cached.isBlank()) return null
+        return try {
+            val json = JSONObject(cached)
+            WeatherSnapshot(
+                currentTemp = json.getDouble("currentTemp"),
+                highTemp = json.getDouble("highTemp"),
+                lowTemp = json.getDouble("lowTemp"),
+                weatherCode = json.getInt("weatherCode"),
+                fetchedAt = json.optLong("fetchedAt", 0L),
+                fahrenheit = json.optBoolean("fahrenheit", false)
+            )
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    private fun resolveWeatherCoordinates(): Pair<Double, Double>? {
+        if (!prefs.weatherUseDeviceLocation) {
+            val latitude = prefs.weatherLatitude.toDouble()
+            val longitude = prefs.weatherLongitude.toDouble()
+            return if (latitude == 0.0 && longitude == 0.0) null else latitude to longitude
+        }
+        if (appContext.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return null
+        }
+        val locationManager = appContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val providers = listOf(LocationManager.NETWORK_PROVIDER, LocationManager.GPS_PROVIDER)
+        providers.forEach { provider ->
+            kotlin.runCatching { locationManager.getLastKnownLocation(provider) }.getOrNull()?.let { location ->
+                prefs.weatherLatitude = location.latitude.toFloat()
+                prefs.weatherLongitude = location.longitude.toFloat()
+                return location.latitude to location.longitude
+            }
+        }
+        return null
     }
 
     fun toggleDateTime() {
