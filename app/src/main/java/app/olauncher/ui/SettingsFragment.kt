@@ -1,9 +1,11 @@
 package app.olauncher.ui
 
+import android.Manifest
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Process
@@ -15,9 +17,11 @@ import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import app.olauncher.BuildConfig
@@ -46,6 +50,7 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
     private lateinit var viewModel: MainViewModel
     private lateinit var deviceManager: DevicePolicyManager
     private lateinit var componentName: ComponentName
+    private val weatherLocationPermissionCode = 8801
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
@@ -77,6 +82,7 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         populateTextSize()
         populateFont()
         populateAlignment()
+        populateWeatherSettings()
         populateStatusBar()
         populateDateTime()
         populateSwipeApps()
@@ -111,6 +117,10 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
             binding.alignmentSelectLayout.visibility = View.GONE
         if (view.id != R.id.clockAlignment)
             binding.clockAlignmentSelectLayout.visibility = View.GONE
+        if (view.id != R.id.weatherSide)
+            binding.weatherSideSelectLayout.visibility = View.GONE
+        if (view.id != R.id.weatherUnits)
+            binding.weatherUnitsSelectLayout.visibility = View.GONE
 
         when (view.id) {
             R.id.olauncherHiddenApps -> showHiddenApps()
@@ -131,6 +141,17 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
             R.id.clockAlignmentLeft -> viewModel.updateClockAlignment(Gravity.START)
             R.id.clockAlignmentCenter -> viewModel.updateClockAlignment(Gravity.CENTER)
             R.id.clockAlignmentRight -> viewModel.updateClockAlignment(Gravity.END)
+            R.id.weatherEnabled -> toggleWeatherEnabled()
+            R.id.weatherUseDeviceLocation -> toggleWeatherLocationMode()
+            R.id.weatherLocation -> openWeatherLocationPicker()
+            R.id.weatherSide -> binding.weatherSideSelectLayout.visibility = View.VISIBLE
+            R.id.weatherSideTop -> updateWeatherSide(Constants.WeatherSide.TOP)
+            R.id.weatherSideBottom -> updateWeatherSide(Constants.WeatherSide.BOTTOM)
+            R.id.weatherSideLeft -> updateWeatherSide(Constants.WeatherSide.LEFT)
+            R.id.weatherSideRight -> updateWeatherSide(Constants.WeatherSide.RIGHT)
+            R.id.weatherUnits -> binding.weatherUnitsSelectLayout.visibility = View.VISIBLE
+            R.id.weatherUnitsCelsius -> updateWeatherUnits(Constants.WeatherUnits.CELSIUS)
+            R.id.weatherUnitsFahrenheit -> updateWeatherUnits(Constants.WeatherUnits.FAHRENHEIT)
             R.id.statusBar -> toggleStatusBar()
             R.id.dateTime -> binding.dateTimeSelectLayout.visibility = View.VISIBLE
             R.id.dateTimeOn -> toggleDateTime(Constants.DateTime.ON)
@@ -225,6 +246,17 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         binding.clockAlignmentLeft.setOnClickListener(this)
         binding.clockAlignmentCenter.setOnClickListener(this)
         binding.clockAlignmentRight.setOnClickListener(this)
+        binding.weatherEnabled.setOnClickListener(this)
+        binding.weatherUseDeviceLocation.setOnClickListener(this)
+        binding.weatherLocation.setOnClickListener(this)
+        binding.weatherSide.setOnClickListener(this)
+        binding.weatherSideTop.setOnClickListener(this)
+        binding.weatherSideBottom.setOnClickListener(this)
+        binding.weatherSideLeft.setOnClickListener(this)
+        binding.weatherSideRight.setOnClickListener(this)
+        binding.weatherUnits.setOnClickListener(this)
+        binding.weatherUnitsCelsius.setOnClickListener(this)
+        binding.weatherUnitsFahrenheit.setOnClickListener(this)
         binding.statusBar.setOnClickListener(this)
         binding.dateTime.setOnClickListener(this)
         binding.dateTimeOn.setOnClickListener(this)
@@ -526,6 +558,83 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         } else binding.screenTimeLayout.visibility = View.GONE
     }
 
+    private fun toggleWeatherEnabled() {
+        prefs.weatherEnabled = !prefs.weatherEnabled
+        populateWeatherSettings()
+        viewModel.refreshHome(false)
+    }
+
+    private fun toggleWeatherLocationMode() {
+        val enablingDeviceLocation = !prefs.weatherUseDeviceLocation
+        if (enablingDeviceLocation && !hasCoarseLocationPermission()) {
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), weatherLocationPermissionCode)
+            return
+        }
+        prefs.weatherUseDeviceLocation = enablingDeviceLocation
+        populateWeatherSettings()
+        viewModel.refreshHome(false)
+    }
+
+    private fun openWeatherLocationPicker() {
+        if (prefs.weatherUseDeviceLocation) {
+            requireContext().showToast(getString(R.string.weather_location_device))
+            return
+        }
+        WeatherLocationPickerDialog.show(
+            context = requireContext(),
+            scope = viewLifecycleOwner.lifecycleScope,
+            fontFamily = prefs.fontFamily
+        ) { result ->
+            prefs.weatherLocationName = result.displayLabel()
+            prefs.weatherLatitude = result.latitude.toFloat()
+            prefs.weatherLongitude = result.longitude.toFloat()
+            populateWeatherSettings()
+            viewModel.refreshHome(false)
+        }
+    }
+
+    private fun updateWeatherSide(side: Int) {
+        if (prefs.weatherSide == side) return
+        prefs.weatherSide = side
+        populateWeatherSettings()
+        viewModel.refreshHome(false)
+    }
+
+    private fun updateWeatherUnits(units: Int) {
+        if (prefs.weatherUnits == units) return
+        prefs.weatherUnits = units
+        populateWeatherSettings()
+        viewModel.refreshHome(false)
+    }
+
+    private fun hasCoarseLocationPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun populateWeatherSettings() {
+        binding.weatherEnabled.text = getString(if (prefs.weatherEnabled) R.string.on else R.string.off)
+        binding.weatherUseDeviceLocation.text = getString(if (prefs.weatherUseDeviceLocation) R.string.on else R.string.off)
+        binding.weatherLocation.text = when {
+            prefs.weatherUseDeviceLocation -> getString(R.string.weather_location_device)
+            prefs.weatherLocationName.isNotBlank() -> prefs.weatherLocationName
+            else -> getString(R.string.weather_location_none)
+        }
+        binding.weatherSide.text = getString(
+            when (prefs.weatherSide) {
+                Constants.WeatherSide.TOP -> R.string.top
+                Constants.WeatherSide.BOTTOM -> R.string.bottom
+                Constants.WeatherSide.LEFT -> R.string.left
+                else -> R.string.right
+            }
+        )
+        binding.weatherUnits.text = getString(
+            if (prefs.weatherUnits == Constants.WeatherUnits.FAHRENHEIT) R.string.fahrenheit else R.string.celsius
+        )
+    }
+
     private fun populateKeyboardText() {
         if (prefs.autoShowKeyboard) binding.autoShowKeyboard.text = getString(R.string.on)
         else binding.autoShowKeyboard.text = getString(R.string.off)
@@ -647,5 +756,15 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
     override fun onDestroy() {
         viewModel.checkForMessages.call()
         super.onDestroy()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == weatherLocationPermissionCode) {
+            prefs.weatherUseDeviceLocation = grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
+            populateWeatherSettings()
+            viewModel.refreshHome(false)
+        }
     }
 }
